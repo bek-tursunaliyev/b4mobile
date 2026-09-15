@@ -5,6 +5,7 @@ import {
   Image as ImageIcon,
   Package,
   ShoppingBag,
+  Smartphone,
   ArrowLeft,
 } from "lucide-react";
 
@@ -69,6 +70,11 @@ function AdminLayout() {
           <NavLink to="/admin/orders">
             <ShoppingBag size={17} />
             Buyurtmalar
+          </NavLink>
+
+          <NavLink to="/admin/trade-ins">
+            <Smartphone size={17} />
+            Telefon almashish
           </NavLink>
         </nav>
 

@@ -7,6 +7,37 @@ import "./compare.css";
 
 const MAX_SLOTS = 3;
 
+// Pulls the first number out of a spec string ("256 GB" -> 256,
+// "3274 mAh" -> 3274) so free-text admin specs can still be compared.
+function parseNumeric(value) {
+  if (value === null || value === undefined) return null;
+  const match = String(value).replace(/\s/g, "").match(/[\d.,]+/);
+  if (!match) return null;
+  const num = parseFloat(match[0].replace(/,/g, ""));
+  return Number.isNaN(num) ? null : num;
+}
+
+// For each row, marks the best value green and the worst red.
+// `invert` flips the meaning for rows where a smaller number is better (price).
+function getRowClasses(cells, invert) {
+  const parsed = cells.map((c) => ({ ...c, num: parseNumeric(c.value) }));
+  const numeric = parsed.filter((c) => c.num !== null);
+
+  if (numeric.length < 2) return {};
+
+  const max = Math.max(...numeric.map((c) => c.num));
+  const min = Math.min(...numeric.map((c) => c.num));
+  if (max === min) return {};
+
+  const classes = {};
+  parsed.forEach((c) => {
+    if (c.num === null) return;
+    if (c.num === max) classes[c.id] = invert ? "compare-low" : "compare-high";
+    else if (c.num === min) classes[c.id] = invert ? "compare-high" : "compare-low";
+  });
+  return classes;
+}
+
 function Compare() {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
@@ -24,15 +55,54 @@ function Compare() {
       .filter((p) => !q || p.name.toLowerCase().includes(q));
   }, [products, selectedIds, query]);
 
-  const selectedProducts = selectedIds
-    .map((id) => products.find((p) => p.id === id))
-    .filter(Boolean);
+  const selectedProducts = useMemo(
+    () => selectedIds.map((id) => products.find((p) => p.id === id)).filter(Boolean),
+    [selectedIds, products]
+  );
 
   const specLabels = useMemo(() => {
     const labels = new Set();
     selectedProducts.forEach((p) => (p.specs || []).forEach((s) => labels.add(s.label)));
     return Array.from(labels);
   }, [selectedProducts]);
+
+  const rows = useMemo(() => {
+    const base = [
+      {
+        label: "Narx",
+        invert: true,
+        value: (p) => p.price,
+        display: (p) => `${p.price.toLocaleString("uz-UZ")} so‘m`,
+      },
+      {
+        label: "Reyting",
+        invert: false,
+        value: (p) => p.rating,
+        display: (p) => `${p.rating} ⭐ (${p.reviews})`,
+      },
+      {
+        label: "Omborda",
+        invert: false,
+        value: (p) => p.stock,
+        display: (p) => (p.stock > 0 ? `${p.stock} dona` : "Mavjud emas"),
+      },
+    ];
+
+    const specs = specLabels.map((label) => ({
+      label,
+      invert: false,
+      value: (p) => {
+        const spec = (p.specs || []).find((s) => s.label === label);
+        return spec ? spec.value : null;
+      },
+      display: (p) => {
+        const spec = (p.specs || []).find((s) => s.label === label);
+        return spec ? spec.value : "—";
+      },
+    }));
+
+    return [...base, ...specs];
+  }, [specLabels]);
 
   const addProduct = (id) => {
     if (selectedIds.length >= MAX_SLOTS) return;
@@ -52,9 +122,11 @@ function Compare() {
           Orqaga
         </button>
 
-        <h1 className="compare-title">Mahsulotlarni taqqoslash</h1>
+        <h1 className="compare-title">Telefonlarni taqqoslash</h1>
         <p className="compare-subtitle">
-          Kamida 2 ta mahsulot tanlang, xususiyatlarini yonma-yon ko‘ring.
+          2 yoki 3 ta mahsulot tanlang — eng yaxshi ko‘rsatkich{" "}
+          <span className="compare-legend-good">yashil</span>, eng past ko‘rsatkich{" "}
+          <span className="compare-legend-bad">qizil</span> rangda belgilanadi.
         </p>
 
         {selectedIds.length < MAX_SLOTS && (
@@ -115,43 +187,35 @@ function Compare() {
               </thead>
 
               <tbody>
-                <tr>
-                  <td>Narx</td>
-                  {selectedProducts.map((p) => (
-                    <td key={p.id}>
-                      <strong>{p.price.toLocaleString("uz-UZ")} so‘m</strong>
-                    </td>
-                  ))}
-                </tr>
+                {rows.map((row) => {
+                  const cells = selectedProducts.map((p) => ({
+                    id: p.id,
+                    value: row.value(p),
+                  }));
+                  const classes =
+                    selectedProducts.length > 1 ? getRowClasses(cells, row.invert) : {};
 
-                <tr>
-                  <td>Reyting</td>
-                  {selectedProducts.map((p) => (
-                    <td key={p.id}>
-                      <span className="compare-rating">
-                        <Star size={13} fill="currentColor" />
-                        {p.rating} ({p.reviews})
-                      </span>
-                    </td>
-                  ))}
-                </tr>
-
-                <tr>
-                  <td>Omborda</td>
-                  {selectedProducts.map((p) => (
-                    <td key={p.id}>{p.stock > 0 ? `${p.stock} dona` : "Mavjud emas"}</td>
-                  ))}
-                </tr>
-
-                {specLabels.map((label) => (
-                  <tr key={label}>
-                    <td>{label}</td>
-                    {selectedProducts.map((p) => {
-                      const spec = (p.specs || []).find((s) => s.label === label);
-                      return <td key={p.id}>{spec ? spec.value : "—"}</td>;
-                    })}
-                  </tr>
-                ))}
+                  return (
+                    <tr key={row.label}>
+                      <td>{row.label}</td>
+                      {selectedProducts.map((p) => (
+                        <td
+                          key={p.id}
+                          className={`compare-cell ${classes[p.id] || ""}`}
+                        >
+                          {row.label === "Reyting" ? (
+                            <span className="compare-rating">
+                              <Star size={13} fill="currentColor" />
+                              {row.display(p)}
+                            </span>
+                          ) : (
+                            row.display(p)
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  );
+                })}
 
                 <tr>
                   <td></td>

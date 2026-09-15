@@ -1,5 +1,5 @@
 /* ==================================================
-   MY PHONE PAGE
+   MY PHONE (TRADE-IN SUBMISSION)
 ================================================== */
 
 .myphone-page {
@@ -19,8 +19,30 @@
 
 .myphone-container {
   width: 100%;
-  max-width: 720px;
+  max-width: 640px;
   margin: 0 auto;
+}
+
+.myphone-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 0;
+  margin: 0 0 22px;
+
+  border: none;
+  background: transparent;
+
+  color: #666;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.myphone-back:hover {
+  color: #111;
 }
 
 .myphone-title {
@@ -31,76 +53,276 @@
 }
 
 .myphone-subtitle {
-  margin-bottom: 22px;
   color: #777;
   font-size: 13px;
-}
-
-.myphone-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  line-height: 1.8;
+  margin-bottom: 20px;
 }
 
 .myphone-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  background: #fff;
+  border: 1px solid #ededed;
+  border-radius: 18px;
+  padding: 24px;
+}
+
+/* ==================================================
+   PHOTO UPLOAD
+================================================== */
+
+.myphone-photo {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 160px;
+
+  border: 1px dashed #ccc;
+  border-radius: 14px;
+  background: #fafafa;
+
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.myphone-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.myphone-photo-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+
+  color: #999;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.myphone-photo input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* ==================================================
+   FORM
+================================================== */
+
+.myphone-form-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.myphone-card label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.myphone-card label > span {
+  color: #444;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.myphone-card input[type="text"],
+.myphone-card select,
+.myphone-card textarea {
+  width: 100%;
+  padding: 11px 13px;
+
+  border: 1px solid #e3e3e3;
+  border-radius: 10px;
+
+  background: #fafafa;
+  color: #111;
+
+  font-family: "Unbounded", sans-serif;
+  font-size: 12px;
+
+  outline: none;
+
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.myphone-card input:focus,
+.myphone-card select:focus,
+.myphone-card textarea:focus {
+  border-color: #111;
+  background: #fff;
+}
+
+.myphone-card textarea {
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.myphone-checkboxes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  padding: 14px;
+
+  background: #fafafa;
+  border-radius: 12px;
+}
+
+.myphone-checkbox {
+  display: flex;
+  flex-direction: row !important;
+  align-items: center;
+  gap: 10px;
+}
+
+.myphone-checkbox input {
+  width: 17px;
+  height: 17px;
+  accent-color: #111;
+}
+
+.myphone-checkbox span {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #333;
+}
+
+.myphone-error {
+  color: #d33a3a;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.myphone-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  padding: 14px;
+
+  border: none;
+  border-radius: 12px;
+  background: #111;
+  color: #fff;
+
+  font-family: "Unbounded", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: background 0.2s ease;
+}
+
+.myphone-submit:hover:not(:disabled) {
+  background: #DAA520;
+}
+
+.myphone-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* ==================================================
+   HISTORY
+================================================== */
+
+.myphone-history {
+  margin-top: 20px;
+}
+
+.myphone-history h2 {
+  margin-bottom: 12px;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.myphone-history-item {
   display: flex;
   align-items: center;
   gap: 14px;
 
   padding: 14px;
+  margin-bottom: 10px;
 
   background: #fff;
   border: 1px solid #ededed;
-  border-radius: 16px;
+  border-radius: 14px;
 
   flex-wrap: wrap;
 }
 
-.myphone-card img {
-  width: 54px;
-  height: 54px;
+.myphone-history-item img {
+  width: 48px;
+  height: 48px;
   object-fit: cover;
   border-radius: 10px;
   flex-shrink: 0;
 }
 
-.myphone-info {
+.myphone-history-info {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
   flex: 1;
   min-width: 140px;
 }
 
-.myphone-info strong {
-  font-size: 13.5px;
+.myphone-history-info strong {
+  font-size: 12.5px;
 }
 
-.myphone-info span {
+.myphone-history-info span {
   color: #888;
-  font-size: 11px;
+  font-size: 10.5px;
 }
 
-.myphone-warranty {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+.myphone-history-status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
 
-  padding: 7px 12px;
-
+.myphone-status {
+  padding: 4px 10px;
   border-radius: 20px;
-  background: #eaf7ee;
-  color: #1a9a4a;
-
-  font-size: 11px;
+  background: #f0f0f0;
+  font-size: 10px;
   font-weight: 700;
-
   white-space: nowrap;
 }
 
-.myphone-warranty.expired {
+.myphone-status-pending {
+  background: #fff4de;
+  color: #b8860b;
+}
+
+.myphone-status-priced {
+  background: #eaf7ee;
+  color: #1a9a4a;
+}
+
+.myphone-status-rejected {
   background: #fdeaea;
   color: #d33a3a;
+}
+
+.myphone-history-status strong {
+  font-size: 12px;
 }
 
 /* ==================================================
@@ -173,8 +395,18 @@
   background: #DAA520;
 }
 
+@media (max-width: 640px) {
+  .myphone-form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 480px) {
   .myphone-page {
     padding: 90px 16px 50px;
+  }
+
+  .myphone-card {
+    padding: 18px;
   }
 }

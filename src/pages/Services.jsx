@@ -21,7 +21,7 @@ const SERVICES = [
     to: "/my-phone",
     icon: Smartphone,
     title: "Mening telefonim",
-    description: "Sotib olingan qurilmalaringiz va kafolat muddatini kuzatib boring.",
+    description: "Eski telefoningizni topshiring — ma’lumotlarini kiriting, narx taklifini oling.",
   },
   {
     to: "/installment",

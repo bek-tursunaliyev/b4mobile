@@ -57,6 +57,28 @@ function mapOrder(row) {
   };
 }
 
+function mapTradeIn(row) {
+  return {
+    id: row.id,
+    brand: row.brand,
+    model: row.model,
+    condition: row.condition,
+    ram: row.ram,
+    storage: row.storage,
+    batteryHealth: row.battery_health,
+    isBroken: row.is_broken,
+    hasScratches: row.has_scratches,
+    hasBox: row.has_box,
+    note: row.note,
+    image: row.image,
+    status: row.status,
+    offeredPrice: row.offered_price ? Number(row.offered_price) : null,
+    telegramUserId: row.telegram_user_id,
+    telegramUsername: row.telegram_username,
+    createdAt: row.created_at,
+  };
+}
+
 // ==================================================
 // PUBLIC STOREFRONT
 // ==================================================
@@ -134,6 +156,56 @@ export async function getMyOrders() {
     user: json.user,
     orders: (json.orders || []).map(mapOrder),
   };
+}
+
+export async function getMyTradeIns() {
+  const initData = getInitData();
+
+  if (!initData) {
+    return { ok: false, requests: [] };
+  }
+
+  const res = await fetch(`${FUNCTIONS_URL}/my-trade-ins`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ initData }),
+  });
+
+  const json = await res.json();
+  if (!res.ok) {
+    return { ok: false, requests: [] };
+  }
+
+  return { ok: true, requests: (json.requests || []).map(mapTradeIn) };
+}
+
+export async function submitTradeIn(payload, file) {
+  const initData = getInitData();
+
+  if (!initData) {
+    throw new Error("Bu funksiya faqat Telegram orqali ochilganda ishlaydi");
+  }
+
+  let imagePayload = {};
+
+  if (file) {
+    const fileBase64 = await fileToBase64(file);
+    imagePayload = {
+      imageBase64: fileBase64,
+      imageFileName: file.name,
+      imageContentType: file.type,
+    };
+  }
+
+  const res = await fetch(`${FUNCTIONS_URL}/submit-trade-in`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ...payload, ...imagePayload, initData }),
+  });
+
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error || "So‘rov yuborilmadi");
+  return json;
 }
 
 // ==================================================
@@ -264,4 +336,18 @@ export async function adminUploadImage(file, folder = "products") {
   const json = await res.json();
   if (!res.ok) throw new Error(json.error || "Rasm yuklanmadi");
   return json.url;
+}
+
+export async function adminGetTradeIns() {
+  const { requests } = await adminRequest("admin-trade-ins");
+  return requests.map(mapTradeIn);
+}
+
+export async function adminUpdateTradeIn(id, updates) {
+  const { request: updated } = await adminRequest("admin-trade-ins", {
+    method: "PATCH",
+    id,
+    body: updates,
+  });
+  return mapTradeIn(updated);
 }
