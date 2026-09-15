@@ -1,0 +1,133 @@
+/* ==================================================
+   COMING SOON
+================================================== */
+
+.coming-soon {
+  min-height: 80vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 110px 20px 60px;
+
+  background: #f7f7f8;
+}
+
+.coming-soon-card {
+  position: relative;
+
+  width: 100%;
+  max-width: 440px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+
+  padding: 46px 32px 38px;
+
+  background: #fff;
+  border: 1px solid #ededed;
+  border-radius: 20px;
+}
+
+.coming-soon-back {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 0;
+
+  border: none;
+  background: transparent;
+
+  color: #999;
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: color 0.2s ease;
+}
+
+.coming-soon-back:hover {
+  color: #111;
+}
+
+.coming-soon-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 70px;
+  height: 70px;
+  margin-bottom: 18px;
+
+  border-radius: 50%;
+  background: #f4f0e4;
+  color: #DAA520;
+}
+
+.coming-soon-tag {
+  margin-bottom: 12px;
+  padding: 5px 12px;
+
+  border-radius: 20px;
+  background: #111;
+
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.coming-soon-card h1 {
+  margin-bottom: 12px;
+
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.coming-soon-card p {
+  margin-bottom: 26px;
+
+  color: #777;
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.coming-soon-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  width: 100%;
+  padding: 14px;
+
+  border-radius: 12px;
+  background: #111;
+
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+
+  transition: background 0.2s ease;
+}
+
+.coming-soon-cta:hover {
+  background: #DAA520;
+}
+
+@media (max-width: 480px) {
+  .coming-soon-card {
+    padding: 40px 22px 32px;
+  }
+}

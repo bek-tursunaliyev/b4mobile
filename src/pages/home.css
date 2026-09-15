@@ -1,0 +1,233 @@
+.home {
+    width: 100%;
+    padding-top: 14px;
+  }
+
+
+  /* PROMO */
+
+  .promo-carousel {
+    position: relative;
+
+    width: 100%;
+    height: 160px;
+
+    overflow: hidden;
+
+    border-radius: 14px;
+    background: #f2f2f2;
+  }
+  
+  .promo-slide {
+    position: absolute;
+    inset: 0;
+  
+    width: 100%;
+    height: 100%;
+  
+    display: flex;
+    align-items: center;
+  
+    padding: 25px 50px;
+  
+    background-size: cover;
+    background-position: center;
+  
+    opacity: 0;
+    visibility: hidden;
+  
+    transition:
+      opacity 0.5s ease,
+      visibility 0.5s ease;
+  }
+  
+  .promo-slide.active {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  
+  /* DARK OVERLAY */
+  
+  .promo-overlay {
+    position: absolute;
+    inset: 0;
+  
+    background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.55),
+      rgba(0, 0, 0, 0.08)
+    );
+  }
+  
+  
+  /* TEXT */
+  
+  .promo-content {
+    position: relative;
+    z-index: 2;
+  
+    color: white;
+  }
+  
+  .promo-content h2 {
+    margin: 0;
+  
+    font-size: 24px;
+    line-height: 1.1;
+    font-weight: 700;
+  }
+  
+  .promo-content p {
+    margin-top: 7px;
+  
+    font-size: 9px;
+    color: rgba(255, 255, 255, 0.8);
+  }
+  
+  
+  /* ARROWS */
+  
+  .promo-arrow {
+    position: absolute;
+    top: 50%;
+    z-index: 5;
+  
+    width: 30px;
+    height: 30px;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    transform: translateY(-50%);
+  
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+  
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+  
+    font-size: 12px;
+  
+    cursor: pointer;
+  
+    backdrop-filter: blur(5px);
+  
+    transition: 0.2s ease;
+  }
+  
+  .promo-arrow:hover {
+    background: white;
+    color: #111;
+  }
+  
+  .promo-prev {
+    left: 15px;
+  }
+  
+  .promo-next {
+    right: 15px;
+  }
+  
+  
+  /* DOTS */
+  
+  .promo-dots {
+    position: absolute;
+  
+    bottom: 10px;
+    left: 50%;
+    z-index: 5;
+  
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  
+    transform: translateX(-50%);
+  }
+  
+  .promo-dots button {
+    width: 5px;
+    height: 5px;
+  
+    padding: 0;
+  
+    border: none;
+    border-radius: 50%;
+  
+    background: rgba(255, 255, 255, 0.5);
+  
+    cursor: pointer;
+  
+    transition: 0.2s ease;
+  }
+  
+  .promo-dots button.active {
+    width: 16px;
+    border-radius: 10px;
+    background: white;
+  }
+  
+  
+  /* TABLET */
+  
+  @media (max-width: 768px) {
+    .promo-carousel {
+      height: 145px;
+      border-radius: 12px;
+    }
+  
+    .promo-slide {
+      padding: 20px 40px;
+    }
+  
+    .promo-content h2 {
+      font-size: 19px;
+    }
+  
+    .promo-content p {
+      font-size: 8px;
+    }
+  }
+  
+  
+  /* MOBILE */
+  
+  @media (max-width: 480px) {
+    .promo-carousel {
+      height: 110px;
+      border-radius: 10px;
+    }
+
+    .promo-slide {
+      padding: 15px 28px;
+    }
+
+    .promo-content h2 {
+      font-size: 14px;
+    }
+
+    .promo-content p {
+      margin-top: 5px;
+      font-size: 6px;
+    }
+
+    .promo-arrow {
+      width: 28px;
+      height: 28px;
+      font-size: 10px;
+    }
+  
+    .promo-prev {
+      left: 7px;
+    }
+  
+    .promo-next {
+      right: 7px;
+    }
+  
+    .promo-dots {
+      bottom: 6px;
+    }
+  }
