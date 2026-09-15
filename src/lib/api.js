@@ -108,6 +108,35 @@ export async function createOrder(payload) {
 }
 
 // ==================================================
+// MY ACCOUNT (current Telegram user, no admin rights needed)
+// ==================================================
+
+export async function getMyOrders() {
+  const initData = getInitData();
+
+  if (!initData) {
+    return { ok: false, user: null, orders: [] };
+  }
+
+  const res = await fetch(`${FUNCTIONS_URL}/my-orders`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ initData }),
+  });
+
+  const json = await res.json();
+  if (!res.ok) {
+    return { ok: false, user: null, orders: [] };
+  }
+
+  return {
+    ok: true,
+    user: json.user,
+    orders: (json.orders || []).map(mapOrder),
+  };
+}
+
+// ==================================================
 // ADMIN
 // ==================================================
 

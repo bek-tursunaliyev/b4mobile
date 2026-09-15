@@ -1,8 +1,8 @@
 /* ==================================================
-   COMING SOON
+   404 NOT FOUND
 ================================================== */
 
-.coming-soon {
+.not-found-page {
   min-height: 80vh;
 
   display: flex;
@@ -14,9 +14,7 @@
   background: #f7f7f8;
 }
 
-.coming-soon-card {
-  position: relative;
-
+.not-found-card {
   width: 100%;
   max-width: 440px;
 
@@ -32,34 +30,7 @@
   border-radius: 20px;
 }
 
-.coming-soon-back {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-
-  padding: 0;
-
-  border: none;
-  background: transparent;
-
-  color: #999;
-  font-size: 12px;
-  font-weight: 600;
-
-  cursor: pointer;
-
-  transition: color 0.2s ease;
-}
-
-.coming-soon-back:hover {
-  color: #111;
-}
-
-.coming-soon-icon {
+.not-found-icon {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -73,7 +44,7 @@
   color: #DAA520;
 }
 
-.coming-soon-tag {
+.not-found-tag {
   margin-bottom: 12px;
   padding: 5px 12px;
 
@@ -84,10 +55,9 @@
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.6px;
-  text-transform: uppercase;
 }
 
-.coming-soon-card h1 {
+.not-found-card h1 {
   margin-bottom: 12px;
 
   font-size: 22px;
@@ -95,7 +65,7 @@
   letter-spacing: -0.5px;
 }
 
-.coming-soon-card p {
+.not-found-card p {
   margin-bottom: 26px;
 
   color: #777;
@@ -103,7 +73,7 @@
   line-height: 1.8;
 }
 
-.coming-soon-cta {
+.not-found-cta {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -122,12 +92,12 @@
   transition: background 0.2s ease;
 }
 
-.coming-soon-cta:hover {
+.not-found-cta:hover {
   background: #DAA520;
 }
 
 @media (max-width: 480px) {
-  .coming-soon-card {
+  .not-found-card {
     padding: 40px 22px 32px;
   }
 }

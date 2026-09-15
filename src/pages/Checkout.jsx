@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
   ArrowRight,
@@ -24,6 +24,7 @@ const PAYMENT_METHODS = [
 
 function Checkout() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { cart, cartTotal, clearCart } = useCart();
 
   const [form, setForm] = useState({
@@ -31,7 +32,7 @@ function Checkout() {
     phone: "",
     region: "",
     address: "",
-    note: "",
+    note: location.state?.note || "",
   });
 
   const [payment, setPayment] = useState("cash");

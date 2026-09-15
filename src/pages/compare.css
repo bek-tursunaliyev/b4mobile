@@ -1,0 +1,276 @@
+/* ==================================================
+   COMPARE (TAQQOSLASH)
+================================================== */
+
+.compare-page {
+  min-height: 100vh;
+  padding: 110px 24px 70px;
+  background: #f7f7f8;
+  color: #111;
+}
+
+.compare-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.compare-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 0;
+  margin: 0 0 24px;
+
+  border: none;
+  background: transparent;
+
+  color: #666;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.compare-back:hover {
+  color: #111;
+}
+
+.compare-title {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+}
+
+.compare-subtitle {
+  color: #777;
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+/* ==================================================
+   SEARCH
+================================================== */
+
+.compare-search {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 14px 16px;
+  margin-bottom: 20px;
+
+  background: #fff;
+  border: 1px solid #e3e3e3;
+  border-radius: 14px;
+
+  color: #999;
+}
+
+.compare-search input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+
+  font-family: "Unbounded", sans-serif;
+  font-size: 12.5px;
+  color: #111;
+}
+
+.compare-search-results {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+
+  max-height: 280px;
+  overflow-y: auto;
+
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 14px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+
+  padding: 8px;
+}
+
+.compare-search-option {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 10px;
+
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+
+  cursor: pointer;
+
+  text-align: left;
+}
+
+.compare-search-option:hover {
+  background: #f4f4f4;
+}
+
+.compare-search-option img {
+  width: 34px;
+  height: 34px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.compare-search-option span {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 600;
+  color: #111;
+}
+
+.compare-search-option strong {
+  font-size: 11px;
+  color: #666;
+  white-space: nowrap;
+}
+
+.compare-search-empty {
+  padding: 14px;
+  color: #999;
+  font-size: 12px;
+  text-align: center;
+}
+
+/* ==================================================
+   EMPTY
+================================================== */
+
+.compare-empty {
+  padding: 60px 0;
+  text-align: center;
+  color: #999;
+  font-size: 13px;
+}
+
+/* ==================================================
+   TABLE
+================================================== */
+
+.compare-table-wrap {
+  overflow-x: auto;
+  border-radius: 16px;
+}
+
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  background: #fff;
+  border: 1px solid #ededed;
+  border-radius: 16px;
+
+  font-size: 12.5px;
+}
+
+.compare-table th,
+.compare-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f2f2f2;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.compare-table td:first-child,
+.compare-table th:first-child {
+  text-align: left;
+  color: #888;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.compare-table thead th {
+  position: relative;
+  padding-top: 30px;
+  vertical-align: top;
+}
+
+.compare-table thead img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 8px;
+}
+
+.compare-table thead strong {
+  display: block;
+  font-size: 12px;
+  max-width: 130px;
+  white-space: normal;
+}
+
+.compare-remove {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 24px;
+  height: 24px;
+
+  border: none;
+  border-radius: 50%;
+  background: #f4f4f4;
+  color: #888;
+
+  cursor: pointer;
+}
+
+.compare-remove:hover {
+  background: #eee;
+  color: #d33a3a;
+}
+
+.compare-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #DAA520;
+  font-weight: 700;
+}
+
+.compare-view {
+  padding: 8px 16px;
+
+  border: none;
+  border-radius: 9px;
+  background: #111;
+  color: #fff;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.compare-view:hover {
+  background: #DAA520;
+}
+
+@media (max-width: 480px) {
+  .compare-page {
+    padding: 90px 16px 50px;
+  }
+}

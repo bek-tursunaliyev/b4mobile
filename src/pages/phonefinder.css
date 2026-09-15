@@ -1,0 +1,312 @@
+/* ==================================================
+   PHONE FINDER
+================================================== */
+
+.finder-page {
+  min-height: 100vh;
+  padding: 110px 24px 70px;
+  background: #f7f7f8;
+  color: #111;
+}
+
+.finder-container {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.finder-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 0;
+  margin: 0 0 24px;
+
+  border: none;
+  background: transparent;
+
+  color: #666;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.finder-back:hover {
+  color: #111;
+}
+
+.finder-title {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+}
+
+.finder-subtitle {
+  color: #777;
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+.finder-steps {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 22px;
+}
+
+.finder-step-dot {
+  height: 4px;
+  flex: 1;
+  border-radius: 4px;
+  background: #e3e3e3;
+}
+
+.finder-step-dot.active {
+  background: #111;
+}
+
+.finder-card {
+  background: #fff;
+  border: 1px solid #ededed;
+  border-radius: 18px;
+  padding: 26px;
+}
+
+.finder-card h2 {
+  font-size: 16px;
+  font-weight: 800;
+  margin-bottom: 18px;
+}
+
+.finder-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.finder-option {
+  padding: 16px;
+
+  border: 1px solid #e3e3e3;
+  border-radius: 12px;
+  background: #fafafa;
+
+  color: #333;
+  font-family: "Unbounded", sans-serif;
+  font-size: 12.5px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.finder-option:hover {
+  border-color: #ccc;
+}
+
+.finder-option.active {
+  background: #111;
+  border-color: #111;
+  color: #fff;
+}
+
+.finder-step-back {
+  margin-top: 16px;
+
+  border: none;
+  background: transparent;
+
+  color: #888;
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.finder-step-back:hover {
+  color: #111;
+}
+
+/* ==================================================
+   RESULTS
+================================================== */
+
+.finder-results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 16px;
+}
+
+.finder-results-header > span {
+  color: #666;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.finder-restart {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  border: 1px solid #e3e3e3;
+  border-radius: 20px;
+  background: #fff;
+
+  padding: 8px 14px;
+
+  color: #666;
+  font-size: 11.5px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.finder-restart:hover {
+  background: #f4f4f4;
+}
+
+.finder-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.finder-product-card {
+  background: #fff;
+  border: 1px solid #ededed;
+  border-radius: 16px;
+  overflow: hidden;
+
+  cursor: pointer;
+
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.finder-product-card:hover {
+  transform: translateY(-2px);
+  border-color: #ddd;
+}
+
+.finder-product-card img {
+  width: 100%;
+  height: 130px;
+  object-fit: cover;
+}
+
+.finder-product-info {
+  padding: 12px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.finder-product-info > span {
+  color: #999;
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.finder-product-info strong {
+  font-size: 12.5px;
+  line-height: 1.3;
+}
+
+.finder-product-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  color: #DAA520;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.finder-product-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+
+  margin-top: 4px;
+}
+
+.finder-product-bottom strong {
+  font-size: 12px;
+}
+
+.finder-product-bottom button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+
+  border: none;
+  border-radius: 9px;
+  background: #111;
+  color: #fff;
+
+  cursor: pointer;
+}
+
+.finder-product-bottom button:hover {
+  background: #DAA520;
+}
+
+.finder-no-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+
+  padding: 50px 20px;
+
+  background: #fff;
+  border: 1px solid #ededed;
+  border-radius: 18px;
+
+  color: #888;
+}
+
+.finder-no-results p {
+  margin: 14px 0 18px;
+  font-size: 13px;
+}
+
+.finder-no-results button {
+  padding: 12px 20px;
+
+  border: none;
+  border-radius: 10px;
+  background: #111;
+  color: #fff;
+
+  font-size: 12.5px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+@media (max-width: 480px) {
+  .finder-page {
+    padding: 90px 16px 50px;
+  }
+
+  .finder-options {
+    grid-template-columns: 1fr;
+  }
+
+  .finder-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+}

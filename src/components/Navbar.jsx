@@ -61,7 +61,7 @@ function Navbar() {
         </li>
 
         <li>
-          <NavLink to="/orders" aria-label="Buyurtmalarim">
+          <NavLink to="/profile" aria-label="Profil">
             <User />
           </NavLink>
         </li>
@@ -81,24 +81,16 @@ function Navbar() {
             Katalog
           </NavLink>
 
-          <NavLink to="/phone-finder" onClick={closeMenu}>
-            Telefon tanlash
-          </NavLink>
-
-          <NavLink to="/compare" onClick={closeMenu}>
-            Solishtirish
-          </NavLink>
-
-          <NavLink to="/installment" onClick={closeMenu}>
-            Bo‘lib to‘lash
-          </NavLink>
-
-          <NavLink to="/my-phone" onClick={closeMenu}>
-            Mening telefonim
+          <NavLink to="/xizmatlar" onClick={closeMenu}>
+            Xizmatlar
           </NavLink>
 
           <NavLink to="/orders" onClick={closeMenu}>
             Buyurtmalarim
+          </NavLink>
+
+          <NavLink to="/profile" onClick={closeMenu}>
+            Profil
           </NavLink>
 
           {isAdmin && (

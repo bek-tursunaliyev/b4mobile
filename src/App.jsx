@@ -13,6 +13,8 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import Orders from "./pages/Orders";
 import Products from "./pages/Products";
+import Profile from "./pages/Profile";
+import Services from "./pages/Services";
 import NotFound from "./pages/NotFound";
 import { CartProvider } from "./context/CartContext";
 import { AdminProvider } from "./context/AdminContext";
@@ -73,6 +75,16 @@ const router = createBrowserRouter([
       {
         path: "orders",
         element: <Orders />,
+      },
+
+      {
+        path: "profile",
+        element: <Profile />,
+      },
+
+      {
+        path: "xizmatlar",
+        element: <Services />,
       },
 
       // PRODUCT DETAIL

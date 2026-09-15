@@ -1,0 +1,107 @@
+/* ==================================================
+   SERVICES (XIZMATLAR) HUB
+================================================== */
+
+.services-page {
+  min-height: 100vh;
+  padding: 110px 24px 70px;
+  background: #f7f7f8;
+  color: #111;
+}
+
+.services-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.services-label {
+  display: block;
+  margin-bottom: 10px;
+
+  color: #999;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.8px;
+}
+
+.services-title {
+  margin-bottom: 28px;
+
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.service-card {
+  display: flex;
+  flex-direction: column;
+
+  padding: 24px;
+
+  background: #fff;
+  border: 1px solid #ededed;
+  border-radius: 18px;
+
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-3px);
+  border-color: #ddd;
+}
+
+.service-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 46px;
+  height: 46px;
+  margin-bottom: 16px;
+
+  border-radius: 12px;
+  background: #f4f0e4;
+  color: #DAA520;
+}
+
+.service-card h2 {
+  font-size: 15px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.service-card p {
+  flex: 1;
+
+  color: #777;
+  font-size: 12px;
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+
+.service-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  color: #111;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .services-page {
+    padding: 90px 16px 50px;
+  }
+
+  .services-grid {
+    grid-template-columns: 1fr;
+  }
+}

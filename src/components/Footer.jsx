@@ -42,8 +42,8 @@ function Footer() {
 
           <Link to="/">Asosiy</Link>
           <Link to="/catalog">Katalog</Link>
+          <Link to="/xizmatlar">Xizmatlar</Link>
           <Link to="/orders">Buyurtmalarim</Link>
-          <Link to="/compare">Solishtirish</Link>
         </div>
 
         <div className="footer-column footer-contact">

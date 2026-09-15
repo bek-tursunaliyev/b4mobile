@@ -1,0 +1,139 @@
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import {
+  ArrowRight,
+  CreditCard,
+  Package,
+  Smartphone,
+  User,
+  Wrench,
+} from "lucide-react";
+
+import { getMyOrders } from "../lib/api";
+import "./profile.css";
+
+function Profile() {
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const [orders, setOrders] = useState([]);
+
+  useEffect(() => {
+    getMyOrders()
+      .then((res) => {
+        setUser(res.user);
+        setOrders(res.orders);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  const totalSpent = orders
+    .filter((o) => o.status !== "cancelled")
+    .reduce((sum, o) => sum + o.total, 0);
+
+  const initials = user?.first_name?.[0]?.toUpperCase() || "?";
+  const fullName = [user?.first_name, user?.last_name].filter(Boolean).join(" ");
+
+  const quickLinks = [
+    { to: "/orders", icon: Package, label: "Buyurtmalarim" },
+    { to: "/xizmatlar", icon: Wrench, label: "Xizmatlar" },
+    { to: "/installment", icon: CreditCard, label: "Bo‘lib to‘lash" },
+    { to: "/cart", icon: Smartphone, label: "Savat" },
+  ];
+
+  if (loading) {
+    return <main className="profile-page profile-loading">Yuklanmoqda...</main>;
+  }
+
+  if (!user) {
+    return (
+      <main className="profile-page">
+        <div className="profile-guest">
+          <div className="profile-guest-icon">
+            <User size={30} />
+          </div>
+          <h1>Profil mavjud emas</h1>
+          <p>
+            Shaxsiy profilingizni ko‘rish uchun ilovani Telegram bot orqali
+            oching — profilingiz Telegram hisobingiz asosida avtomatik
+            yaratiladi, ro‘yxatdan o‘tish shart emas.
+          </p>
+          <Link to="/catalog" className="profile-guest-cta">
+            Katalogni ko‘rish
+            <ArrowRight size={18} />
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
+  return (
+    <main className="profile-page">
+      <div className="profile-container">
+        <div className="profile-card">
+          <div className="profile-avatar">{initials}</div>
+
+          <div className="profile-info">
+            <h1>{fullName || "Foydalanuvchi"}</h1>
+            {user.username && <span>@{user.username}</span>}
+          </div>
+        </div>
+
+        <div className="profile-stats">
+          <div className="profile-stat">
+            <strong>{orders.length}</strong>
+            <span>Buyurtmalar</span>
+          </div>
+          <div className="profile-stat">
+            <strong>{totalSpent.toLocaleString("uz-UZ")} so‘m</strong>
+            <span>Umumiy xarid</span>
+          </div>
+        </div>
+
+        <div className="profile-quicklinks">
+          {quickLinks.map((link) => {
+            const Icon = link.icon;
+            return (
+              <Link to={link.to} className="profile-quicklink" key={link.to}>
+                <div className="profile-quicklink-icon">
+                  <Icon size={19} />
+                </div>
+                <span>{link.label}</span>
+                <ArrowRight size={16} />
+              </Link>
+            );
+          })}
+        </div>
+
+        <div className="profile-card">
+          <div className="profile-card-header">
+            <h2>So‘nggi buyurtmalar</h2>
+            {orders.length > 0 && (
+              <Link to="/orders">Barchasi <ArrowRight size={14} /></Link>
+            )}
+          </div>
+
+          {orders.length === 0 ? (
+            <p className="profile-empty">
+              Hali buyurtma qilmagansiz.{" "}
+              <Link to="/catalog">Katalogni ko‘ring</Link>
+            </p>
+          ) : (
+            <div className="profile-orders">
+              {orders.slice(0, 3).map((order) => (
+                <div className="profile-order-row" key={order.id}>
+                  <div>
+                    <strong>{order.orderCode}</strong>
+                    <span>{new Date(order.createdAt).toLocaleDateString("uz-UZ")}</span>
+                  </div>
+                  <strong>{order.total.toLocaleString("uz-UZ")} so‘m</strong>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </main>
+  );
+}
+
+export default Profile;

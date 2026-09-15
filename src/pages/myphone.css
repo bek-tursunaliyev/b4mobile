@@ -1,0 +1,180 @@
+/* ==================================================
+   MY PHONE PAGE
+================================================== */
+
+.myphone-page {
+  min-height: 100vh;
+  padding: 110px 24px 70px;
+  background: #f7f7f8;
+  color: #111;
+}
+
+.myphone-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  font-size: 13px;
+}
+
+.myphone-container {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.myphone-title {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+}
+
+.myphone-subtitle {
+  margin-bottom: 22px;
+  color: #777;
+  font-size: 13px;
+}
+
+.myphone-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.myphone-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 14px;
+
+  background: #fff;
+  border: 1px solid #ededed;
+  border-radius: 16px;
+
+  flex-wrap: wrap;
+}
+
+.myphone-card img {
+  width: 54px;
+  height: 54px;
+  object-fit: cover;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.myphone-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 140px;
+}
+
+.myphone-info strong {
+  font-size: 13.5px;
+}
+
+.myphone-info span {
+  color: #888;
+  font-size: 11px;
+}
+
+.myphone-warranty {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 7px 12px;
+
+  border-radius: 20px;
+  background: #eaf7ee;
+  color: #1a9a4a;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+.myphone-warranty.expired {
+  background: #fdeaea;
+  color: #d33a3a;
+}
+
+/* ==================================================
+   EMPTY / GUEST
+================================================== */
+
+.myphone-empty {
+  max-width: 400px;
+  margin: 40px auto;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+
+  padding: 40px 28px;
+
+  background: #fff;
+  border: 1px solid #ededed;
+  border-radius: 20px;
+}
+
+.myphone-empty-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 70px;
+  height: 70px;
+  margin-bottom: 18px;
+
+  border-radius: 50%;
+  background: #f4f0e4;
+  color: #DAA520;
+}
+
+.myphone-empty h1 {
+  margin-bottom: 10px;
+  font-size: 19px;
+  font-weight: 800;
+}
+
+.myphone-empty p {
+  margin-bottom: 22px;
+  color: #777;
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.myphone-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  width: 100%;
+  padding: 14px;
+
+  border-radius: 12px;
+  background: #111;
+  color: #fff;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  transition: background 0.2s ease;
+}
+
+.myphone-cta:hover {
+  background: #DAA520;
+}
+
+@media (max-width: 480px) {
+  .myphone-page {
+    padding: 90px 16px 50px;
+  }
+}
