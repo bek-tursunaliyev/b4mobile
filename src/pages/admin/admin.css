@@ -660,6 +660,37 @@
   border-color: #f0c8c8;
 }
 
+.admin-brand-add-trigger {
+  display: flex;
+  align-items: flex-end;
+}
+
+.admin-brand-add-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 8px;
+}
+
+.admin-brand-add-row button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 38px;
+
+  border: 1px solid #e3e3e3;
+  border-radius: 10px;
+  background: #fafafa;
+  color: #999;
+
+  cursor: pointer;
+}
+
+.admin-brand-add-row button:hover {
+  color: #111;
+  border-color: #ccc;
+}
+
 /* ==================================================
    TABLE
 ================================================== */

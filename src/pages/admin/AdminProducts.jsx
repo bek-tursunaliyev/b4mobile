@@ -13,6 +13,47 @@ import { CURRENCIES, formatMoney } from "../../lib/currency";
 const RAM_OPTIONS = [4, 6, 8, 12, 16];
 const STORAGE_OPTIONS = [64, 128, 256, 512, 1024];
 
+// Must match the `filter` values in src/components/Category.jsx so catalog filtering stays consistent
+const CATEGORY_OPTIONS = [
+  "Smartfon",
+  "Smart soat",
+  "Kompyuter",
+  "Zaryadnik",
+  "Naushnik",
+  "Telefon g‘ilofi",
+  "PC aksessuari",
+  "Ko‘zoynak",
+  "Powerbank",
+];
+
+const PHONE_CATEGORY = "Smartfon";
+
+const DEFAULT_PHONE_BRANDS = [
+  "Samsung",
+  "Apple",
+  "Xiaomi",
+  "Huawei",
+  "Honor",
+  "OnePlus",
+  "Realme",
+  "Vivo",
+  "Oppo",
+  "Infinix",
+  "7Mobile",
+];
+
+const CUSTOM_BRANDS_KEY = "b4mobile_admin_custom_phone_brands";
+
+function loadCustomBrands() {
+  try {
+    const raw = localStorage.getItem(CUSTOM_BRANDS_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
 const PRIMARY_USE_OPTIONS = [
   { id: "kundalik", label: "Kundalik" },
   { id: "gaming", label: "Gaming" },
@@ -77,6 +118,15 @@ function AdminProducts() {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const [idSearch, setIdSearch] = useState("");
+  const [customBrands, setCustomBrands] = useState(loadCustomBrands);
+  const [addingBrand, setAddingBrand] = useState(false);
+  const [newBrandName, setNewBrandName] = useState("");
+
+  const isPhoneCategory = form.category === PHONE_CATEGORY;
+  const phoneBrands = [
+    ...DEFAULT_PHONE_BRANDS,
+    ...customBrands.filter((b) => !DEFAULT_PHONE_BRANDS.includes(b)),
+  ];
 
   const visibleProducts = idSearch.trim()
     ? products.filter((p) => String(p.id) === idSearch.trim())
@@ -187,6 +237,25 @@ function AdminProducts() {
     }));
   };
 
+  const handleAddBrand = () => {
+    const name = newBrandName.trim();
+    if (!name) return;
+
+    if (!phoneBrands.includes(name)) {
+      const next = [...customBrands, name];
+      setCustomBrands(next);
+      try {
+        localStorage.setItem(CUSTOM_BRANDS_KEY, JSON.stringify(next));
+      } catch {
+        // ignore storage errors (e.g. private mode)
+      }
+    }
+
+    setForm((prev) => ({ ...prev, brand: name }));
+    setNewBrandName("");
+    setAddingBrand(false);
+  };
+
   const togglePrimaryUse = (useId) => {
     setForm((prev) => ({
       ...prev,
@@ -281,6 +350,25 @@ function AdminProducts() {
         <form onSubmit={handleSubmit} className="admin-form">
           <div className="admin-form-row">
             <label>
+              <span>Kategoriya *</span>
+              <select
+                value={form.category}
+                onChange={(e) => {
+                  setForm((prev) => ({ ...prev, category: e.target.value }));
+                  setAddingBrand(false);
+                  setNewBrandName("");
+                }}
+              >
+                <option value="">Tanlang</option>
+                {CATEGORY_OPTIONS.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label>
               <span>Nomi *</span>
               <input
                 type="text"
@@ -288,24 +376,76 @@ function AdminProducts() {
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
               />
             </label>
+          </div>
 
+          <div className="admin-form-row">
             <label>
               <span>Brend</span>
-              <input
-                type="text"
-                value={form.brand}
-                onChange={(e) => setForm({ ...form, brand: e.target.value })}
-              />
+              {isPhoneCategory ? (
+                <select
+                  value={form.brand}
+                  onChange={(e) => setForm({ ...form, brand: e.target.value })}
+                >
+                  <option value="">Tanlang</option>
+                  {phoneBrands.map((b) => (
+                    <option key={b} value={b}>
+                      {b}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type="text"
+                  value={form.brand}
+                  onChange={(e) => setForm({ ...form, brand: e.target.value })}
+                />
+              )}
             </label>
 
-            <label>
-              <span>Kategoriya *</span>
-              <input
-                type="text"
-                value={form.category}
-                onChange={(e) => setForm({ ...form, category: e.target.value })}
-              />
-            </label>
+            {isPhoneCategory &&
+              (addingBrand ? (
+                <label>
+                  <span>Yangi brend</span>
+                  <div className="admin-brand-add-row">
+                    <input
+                      type="text"
+                      autoFocus
+                      placeholder="Brend nomi"
+                      value={newBrandName}
+                      onChange={(e) => setNewBrandName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleAddBrand();
+                        }
+                      }}
+                    />
+                    <button type="button" onClick={handleAddBrand}>
+                      <Plus size={15} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAddingBrand(false);
+                        setNewBrandName("");
+                      }}
+                    >
+                      <X size={15} />
+                    </button>
+                  </div>
+                </label>
+              ) : (
+                <div className="admin-brand-add-trigger">
+                  <button
+                    type="button"
+                    className="admin-link-btn"
+                    onClick={() => setAddingBrand(true)}
+                  >
+                    <Plus size={15} />
+                    Brend qo‘shish
+                  </button>
+                </div>
+              ))}
           </div>
 
           <div className="admin-currency-row">
@@ -431,6 +571,16 @@ function AdminProducts() {
                     </option>
                   ))}
                 </select>
+              </label>
+
+              <label>
+                <span>Protsessor</span>
+                <input
+                  type="text"
+                  placeholder="Masalan: Snapdragon 8 Gen 3"
+                  value={form.chipset}
+                  onChange={(e) => setForm({ ...form, chipset: e.target.value })}
+                />
               </label>
             </div>
 
@@ -609,16 +759,6 @@ function AdminProducts() {
                     />
                   </label>
                 </div>
-
-                <label className="admin-form-full">
-                  <span>Chipset</span>
-                  <input
-                    type="text"
-                    placeholder="Masalan: Snapdragon 8 Gen 3"
-                    value={form.chipset}
-                    onChange={(e) => setForm({ ...form, chipset: e.target.value })}
-                  />
-                </label>
 
                 <div className="admin-form-full">
                   <span>Asosiy foydalanish</span>

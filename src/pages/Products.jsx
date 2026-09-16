@@ -125,6 +125,7 @@ function Products() {
           : `${product.storageGb} GB`
         : "",
     },
+    { label: "Protsessor", value: product.chipset },
     { label: "Ekran", value: product.screen },
     { label: "Kamera", value: product.camera },
     { label: "Batareya", value: product.battery },
