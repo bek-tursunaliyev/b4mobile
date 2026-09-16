@@ -10,17 +10,49 @@ import {
 } from "../../lib/api";
 import { CURRENCIES, formatMoney } from "../../lib/currency";
 
-const SEGMENTS = [
-  { id: "flagman", label: "Flagman" },
-  { id: "mid", label: "O‘rta segment" },
-  { id: "budget", label: "Byudjet" },
-  { id: "gaming", label: "Gaming" },
-  { id: "camera", label: "Kamera" },
-  { id: "premium", label: "Premium" },
-];
-
 const RAM_OPTIONS = [4, 6, 8, 12, 16];
 const STORAGE_OPTIONS = [64, 128, 256, 512, 1024];
+
+// Must match the `filter` values in src/components/Category.jsx so catalog filtering stays consistent
+const CATEGORY_OPTIONS = [
+  "Smartfon",
+  "Smart soat",
+  "Kompyuter",
+  "Zaryadnik",
+  "Naushnik",
+  "Telefon g‘ilofi",
+  "PC aksessuari",
+  "Ko‘zoynak",
+  "Powerbank",
+];
+
+const PHONE_CATEGORY = "Smartfon";
+
+const DEFAULT_PHONE_BRANDS = [
+  "Samsung",
+  "Apple",
+  "Xiaomi",
+  "Huawei",
+  "Honor",
+  "OnePlus",
+  "Realme",
+  "Vivo",
+  "Oppo",
+  "Infinix",
+  "7Mobile",
+];
+
+const CUSTOM_BRANDS_KEY = "b4mobile_admin_custom_phone_brands";
+
+function loadCustomBrands() {
+  try {
+    const raw = localStorage.getItem(CUSTOM_BRANDS_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
 
 const PRIMARY_USE_OPTIONS = [
   { id: "kundalik", label: "Kundalik" },
@@ -58,9 +90,12 @@ const EMPTY_FORM = {
   deliveryPrice: "",
   warranty: "",
   phoneFinderEnabled: false,
-  segment: "",
   ramGb: "",
   storageGb: "",
+  screen: "",
+  camera: "",
+  battery: "",
+  ipRating: "",
   os: "",
   primaryUses: [],
   cameraScore: "",
@@ -83,6 +118,15 @@ function AdminProducts() {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const [idSearch, setIdSearch] = useState("");
+  const [customBrands, setCustomBrands] = useState(loadCustomBrands);
+  const [addingBrand, setAddingBrand] = useState(false);
+  const [newBrandName, setNewBrandName] = useState("");
+
+  const isPhoneCategory = form.category === PHONE_CATEGORY;
+  const phoneBrands = [
+    ...DEFAULT_PHONE_BRANDS,
+    ...customBrands.filter((b) => !DEFAULT_PHONE_BRANDS.includes(b)),
+  ];
 
   const visibleProducts = idSearch.trim()
     ? products.filter((p) => String(p.id) === idSearch.trim())
@@ -121,9 +165,12 @@ function AdminProducts() {
       deliveryPrice: product.deliveryPrice ?? "",
       warranty: product.warranty || "",
       phoneFinderEnabled: product.phoneFinderEnabled || false,
-      segment: product.segment || "",
       ramGb: product.ramGb || "",
       storageGb: product.storageGb || "",
+      screen: product.screen || "",
+      camera: product.camera || "",
+      battery: product.battery || "",
+      ipRating: product.ipRating || "",
       os: product.os || "",
       primaryUses: product.primaryUses || [],
       cameraScore: product.cameraScore || "",
@@ -190,6 +237,25 @@ function AdminProducts() {
     }));
   };
 
+  const handleAddBrand = () => {
+    const name = newBrandName.trim();
+    if (!name) return;
+
+    if (!phoneBrands.includes(name)) {
+      const next = [...customBrands, name];
+      setCustomBrands(next);
+      try {
+        localStorage.setItem(CUSTOM_BRANDS_KEY, JSON.stringify(next));
+      } catch {
+        // ignore storage errors (e.g. private mode)
+      }
+    }
+
+    setForm((prev) => ({ ...prev, brand: name }));
+    setNewBrandName("");
+    setAddingBrand(false);
+  };
+
   const togglePrimaryUse = (useId) => {
     setForm((prev) => ({
       ...prev,
@@ -230,9 +296,12 @@ function AdminProducts() {
         : null,
       warranty: form.warranty.trim() || null,
       phoneFinderEnabled: form.phoneFinderEnabled,
-      segment: form.segment || null,
       ramGb: form.ramGb ? Number(form.ramGb) : null,
       storageGb: form.storageGb ? Number(form.storageGb) : null,
+      screen: form.screen.trim() || null,
+      camera: form.camera.trim() || null,
+      battery: form.battery.trim() || null,
+      ipRating: form.ipRating.trim() || null,
       os: form.os || null,
       primaryUses: form.primaryUses,
       cameraScore: form.cameraScore ? Number(form.cameraScore) : null,
@@ -281,6 +350,25 @@ function AdminProducts() {
         <form onSubmit={handleSubmit} className="admin-form">
           <div className="admin-form-row">
             <label>
+              <span>Kategoriya *</span>
+              <select
+                value={form.category}
+                onChange={(e) => {
+                  setForm((prev) => ({ ...prev, category: e.target.value }));
+                  setAddingBrand(false);
+                  setNewBrandName("");
+                }}
+              >
+                <option value="">Tanlang</option>
+                {CATEGORY_OPTIONS.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label>
               <span>Nomi *</span>
               <input
                 type="text"
@@ -288,24 +376,76 @@ function AdminProducts() {
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
               />
             </label>
+          </div>
 
+          <div className="admin-form-row">
             <label>
               <span>Brend</span>
-              <input
-                type="text"
-                value={form.brand}
-                onChange={(e) => setForm({ ...form, brand: e.target.value })}
-              />
+              {isPhoneCategory ? (
+                <select
+                  value={form.brand}
+                  onChange={(e) => setForm({ ...form, brand: e.target.value })}
+                >
+                  <option value="">Tanlang</option>
+                  {phoneBrands.map((b) => (
+                    <option key={b} value={b}>
+                      {b}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type="text"
+                  value={form.brand}
+                  onChange={(e) => setForm({ ...form, brand: e.target.value })}
+                />
+              )}
             </label>
 
-            <label>
-              <span>Kategoriya *</span>
-              <input
-                type="text"
-                value={form.category}
-                onChange={(e) => setForm({ ...form, category: e.target.value })}
-              />
-            </label>
+            {isPhoneCategory &&
+              (addingBrand ? (
+                <label>
+                  <span>Yangi brend</span>
+                  <div className="admin-brand-add-row">
+                    <input
+                      type="text"
+                      autoFocus
+                      placeholder="Brend nomi"
+                      value={newBrandName}
+                      onChange={(e) => setNewBrandName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleAddBrand();
+                        }
+                      }}
+                    />
+                    <button type="button" onClick={handleAddBrand}>
+                      <Plus size={15} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAddingBrand(false);
+                        setNewBrandName("");
+                      }}
+                    >
+                      <X size={15} />
+                    </button>
+                  </div>
+                </label>
+              ) : (
+                <div className="admin-brand-add-trigger">
+                  <button
+                    type="button"
+                    className="admin-link-btn"
+                    onClick={() => setAddingBrand(true)}
+                  >
+                    <Plus size={15} />
+                    Brend qo‘shish
+                  </button>
+                </div>
+              ))}
           </div>
 
           <div className="admin-currency-row">
@@ -399,7 +539,99 @@ function AdminProducts() {
 
           <div className="admin-specs-editor">
             <div className="admin-card-header">
-              <span>Xususiyatlari</span>
+              <span>Asosiy xususiyatlar</span>
+            </div>
+
+            <div className="admin-form-row">
+              <label>
+                <span>RAM (GB)</span>
+                <select
+                  value={form.ramGb}
+                  onChange={(e) => setForm({ ...form, ramGb: e.target.value })}
+                >
+                  <option value="">Tanlanmagan</option>
+                  {RAM_OPTIONS.map((r) => (
+                    <option key={r} value={r}>
+                      {r} GB
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label>
+                <span>Doimiy xotira (Storage)</span>
+                <select
+                  value={form.storageGb}
+                  onChange={(e) => setForm({ ...form, storageGb: e.target.value })}
+                >
+                  <option value="">Tanlanmagan</option>
+                  {STORAGE_OPTIONS.map((s) => (
+                    <option key={s} value={s}>
+                      {s >= 1024 ? "1 TB" : `${s} GB`}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label>
+                <span>Protsessor</span>
+                <input
+                  type="text"
+                  placeholder="Masalan: Snapdragon 8 Gen 3"
+                  value={form.chipset}
+                  onChange={(e) => setForm({ ...form, chipset: e.target.value })}
+                />
+              </label>
+            </div>
+
+            <div className="admin-form-row">
+              <label>
+                <span>Ekran</span>
+                <input
+                  type="text"
+                  placeholder="Masalan: 6.7″ AMOLED, 120Hz"
+                  value={form.screen}
+                  onChange={(e) => setForm({ ...form, screen: e.target.value })}
+                />
+              </label>
+
+              <label>
+                <span>Kamera</span>
+                <input
+                  type="text"
+                  placeholder="Masalan: 50MP + 12MP + 5MP"
+                  value={form.camera}
+                  onChange={(e) => setForm({ ...form, camera: e.target.value })}
+                />
+              </label>
+            </div>
+
+            <div className="admin-form-row">
+              <label>
+                <span>Batareya</span>
+                <input
+                  type="text"
+                  placeholder="Masalan: 5000 mAh, 67W tez zaryad"
+                  value={form.battery}
+                  onChange={(e) => setForm({ ...form, battery: e.target.value })}
+                />
+              </label>
+
+              <label>
+                <span>Himoya darajasi (IP rating)</span>
+                <input
+                  type="text"
+                  placeholder="Masalan: IP68"
+                  value={form.ipRating}
+                  onChange={(e) => setForm({ ...form, ipRating: e.target.value })}
+                />
+              </label>
+            </div>
+          </div>
+
+          <div className="admin-specs-editor">
+            <div className="admin-card-header">
+              <span>Qo‘shimcha xususiyatlar</span>
               <button type="button" className="admin-link-btn" onClick={addSpec}>
                 <Plus size={15} />
                 Qo‘shish
@@ -410,7 +642,7 @@ function AdminProducts() {
               <div className="admin-spec-row" key={index}>
                 <input
                   type="text"
-                  placeholder="Nomi (masalan: RAM)"
+                  placeholder="Nomi (masalan: Protsessor)"
                   value={spec.label}
                   onChange={(e) => updateSpec(index, "label", e.target.value)}
                 />
@@ -498,53 +730,6 @@ function AdminProducts() {
               <>
                 <div className="admin-form-row">
                   <label>
-                    <span>Telefon turkumi</span>
-                    <select
-                      value={form.segment}
-                      onChange={(e) => setForm({ ...form, segment: e.target.value })}
-                    >
-                      <option value="">Tanlanmagan</option>
-                      {SEGMENTS.map((s) => (
-                        <option key={s.id} value={s.id}>
-                          {s.label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-
-                  <label>
-                    <span>RAM (GB)</span>
-                    <select
-                      value={form.ramGb}
-                      onChange={(e) => setForm({ ...form, ramGb: e.target.value })}
-                    >
-                      <option value="">Tanlanmagan</option>
-                      {RAM_OPTIONS.map((r) => (
-                        <option key={r} value={r}>
-                          {r} GB
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-
-                  <label>
-                    <span>Xotira (Storage)</span>
-                    <select
-                      value={form.storageGb}
-                      onChange={(e) => setForm({ ...form, storageGb: e.target.value })}
-                    >
-                      <option value="">Tanlanmagan</option>
-                      {STORAGE_OPTIONS.map((s) => (
-                        <option key={s} value={s}>
-                          {s >= 1024 ? "1 TB" : `${s} GB`}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                </div>
-
-                <div className="admin-form-row">
-                  <label>
                     <span>Operatsion tizim</span>
                     <select
                       value={form.os}
@@ -574,16 +759,6 @@ function AdminProducts() {
                     />
                   </label>
                 </div>
-
-                <label className="admin-form-full">
-                  <span>Chipset</span>
-                  <input
-                    type="text"
-                    placeholder="Masalan: Snapdragon 8 Gen 3"
-                    value={form.chipset}
-                    onChange={(e) => setForm({ ...form, chipset: e.target.value })}
-                  />
-                </label>
 
                 <div className="admin-form-full">
                   <span>Asosiy foydalanish</span>
