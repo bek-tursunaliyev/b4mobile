@@ -47,6 +47,7 @@ const EMPTY_FORM = {
   category: "",
   price: "",
   oldPrice: "",
+  costPrice: "",
   stock: "",
   image: "",
   description: "",
@@ -108,6 +109,7 @@ function AdminProducts() {
       category: product.category,
       price: product.price,
       oldPrice: product.oldPrice || "",
+      costPrice: product.costPrice ?? "",
       stock: product.stock,
       image: product.image || "",
       description: product.description || "",
@@ -211,6 +213,7 @@ function AdminProducts() {
       category: form.category.trim(),
       price: Number(form.price),
       oldPrice: form.oldPrice ? Number(form.oldPrice) : null,
+      costPrice: form.costPrice !== "" ? Number(form.costPrice) : null,
       stock: form.stock ? Number(form.stock) : 0,
       image: form.image || null,
       description: form.description.trim() || null,
@@ -329,6 +332,27 @@ function AdminProducts() {
               />
             </label>
           </div>
+
+          <div className="admin-form-row">
+            <label>
+              <span>Tannarx (xarid narxi)</span>
+              <input
+                type="number"
+                placeholder="Faqat siz ko‘rasiz, mijozga chiqmaydi"
+                value={form.costPrice}
+                onChange={(e) => setForm({ ...form, costPrice: e.target.value })}
+              />
+            </label>
+          </div>
+
+          {form.price !== "" && form.costPrice !== "" && (
+            <p className="admin-profit-hint">
+              Bitta mahsulotdan sof foyda:{" "}
+              <strong>
+                {(Number(form.price) - Number(form.costPrice)).toLocaleString("uz-UZ")} so‘m
+              </strong>
+            </p>
+          )}
 
           <label>
             <span>Rasm</span>

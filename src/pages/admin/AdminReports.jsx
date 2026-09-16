@@ -1,82 +1,37 @@
 import React, { useEffect, useState } from "react";
 
-import {
-  adminCreateExpense,
-  adminDeleteExpense,
-  adminGetExpenses,
-  adminGetOrders,
-} from "../../lib/api";
+import { adminGetOrders, adminGetProducts } from "../../lib/api";
 
 function AdminReports() {
   const [orders, setOrders] = useState([]);
-  const [expenses, setExpenses] = useState([]);
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [form, setForm] = useState({ description: "", amount: "" });
-  const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  const load = () => {
+  useEffect(() => {
     setLoading(true);
-    Promise.all([adminGetOrders(), adminGetExpenses()])
-      .then(([o, e]) => {
+    Promise.all([adminGetOrders(), adminGetProducts()])
+      .then(([o, p]) => {
         setOrders(o);
-        setExpenses(e);
+        setProducts(p);
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  };
-
-  useEffect(load, []);
+  }, []);
 
   const validOrders = orders.filter((o) => o.status !== "cancelled");
   const income = validOrders.reduce((sum, o) => sum + o.total, 0);
-  const expenseTotal = expenses.reduce((sum, e) => sum + e.amount, 0);
-  const net = income - expenseTotal;
 
-  const handleAddExpense = async (e) => {
-    e.preventDefault();
-    if (!form.description.trim() || !form.amount) return;
+  const productById = Object.fromEntries(products.map((p) => [p.id, p]));
 
-    setSaving(true);
-    setError("");
-
-    try {
-      const created = await adminCreateExpense({
-        description: form.description.trim(),
-        amount: Number(form.amount),
-      });
-      setExpenses((prev) => [created, ...prev]);
-      setForm({ description: "", amount: "" });
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleDeleteExpense = async (id) => {
-    if (!window.confirm("Xarajatni o‘chirishni tasdiqlaysizmi?")) return;
-    await adminDeleteExpense(id);
-    setExpenses((prev) => prev.filter((e) => e.id !== id));
-  };
-
-  const timeline = [
-    ...validOrders.map((o) => ({
-      id: `order-${o.id}`,
-      type: "kirim",
-      label: `Buyurtma ${o.orderCode} — ${o.fullName}`,
-      amount: o.total,
-      date: o.createdAt,
-    })),
-    ...expenses.map((e) => ({
-      id: `expense-${e.id}`,
-      type: "chiqim",
-      label: e.description,
-      amount: e.amount,
-      date: e.createdAt,
-      raw: e,
-    })),
-  ].sort((a, b) => new Date(b.date) - new Date(a.date));
+  const netProfit = validOrders.reduce((sum, order) => {
+    const orderProfit = (order.items || []).reduce((itemSum, item) => {
+      const product = productById[item.id];
+      if (!product || product.costPrice == null) return itemSum;
+      return itemSum + (item.price - product.costPrice) * item.quantity;
+    }, 0);
+    return sum + orderProfit;
+  }, 0);
 
   if (loading) {
     return <p className="admin-loading">Yuklanmoqda...</p>;
@@ -85,6 +40,8 @@ function AdminReports() {
   return (
     <div>
       <h1 className="admin-page-title">Hisobot</h1>
+
+      {error && <p className="admin-error">{error}</p>}
 
       <div className="admin-stats-grid admin-report-stats">
         <div className="admin-stat-card">
@@ -96,15 +53,8 @@ function AdminReports() {
 
         <div className="admin-stat-card">
           <div>
-            <strong>{expenseTotal.toLocaleString("uz-UZ")} so‘m</strong>
-            <span>Jami chiqim</span>
-          </div>
-        </div>
-
-        <div className="admin-stat-card">
-          <div>
-            <strong className={net >= 0 ? "admin-report-positive" : "admin-report-negative"}>
-              {net.toLocaleString("uz-UZ")} so‘m
+            <strong className={netProfit >= 0 ? "admin-report-positive" : "admin-report-negative"}>
+              {netProfit.toLocaleString("uz-UZ")} so‘m
             </strong>
             <span>Sof foyda</span>
           </div>
@@ -112,70 +62,31 @@ function AdminReports() {
       </div>
 
       <div className="admin-card">
-        <h2>Yangi xarajat qo‘shish</h2>
+        <h2>So‘nggi kirimlar</h2>
 
-        <form className="admin-expense-form" onSubmit={handleAddExpense}>
-          <input
-            type="text"
-            placeholder="Xarajat nima uchun (masalan: Ijara)"
-            value={form.description}
-            onChange={(e) => setForm({ ...form, description: e.target.value })}
-          />
-          <input
-            type="number"
-            placeholder="Summasi"
-            value={form.amount}
-            onChange={(e) => setForm({ ...form, amount: e.target.value })}
-          />
-          <button type="submit" className="admin-submit" disabled={saving}>
-            {saving ? "Saqlanmoqda..." : "Qo‘shish"}
-          </button>
-        </form>
-
-        {error && <p className="admin-error">{error}</p>}
-      </div>
-
-      <div className="admin-card">
-        <h2>Kirim va chiqimlar tarixi</h2>
-
-        {timeline.length === 0 ? (
-          <p className="admin-empty">Hozircha yozuv yo‘q.</p>
+        {validOrders.length === 0 ? (
+          <p className="admin-empty">Hozircha buyurtma yo‘q.</p>
         ) : (
           <div className="admin-report-timeline">
-            {timeline.map((item) => (
-              <div className="admin-report-row" key={item.id}>
-                <div>
-                  <span className={`admin-report-tag admin-report-tag-${item.type}`}>
-                    {item.type === "kirim" ? "Kirim" : "Chiqim"}
-                  </span>
-                  <span className="admin-report-label">{item.label}</span>
-                  <span className="admin-report-date">
-                    {new Date(item.date).toLocaleDateString("uz-UZ")}
-                  </span>
-                </div>
+            {validOrders
+              .slice()
+              .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+              .map((order) => (
+                <div className="admin-report-row" key={order.id}>
+                  <div>
+                    <span className="admin-report-label">
+                      {order.orderCode} — {order.fullName}
+                    </span>
+                    <span className="admin-report-date">
+                      {new Date(order.createdAt).toLocaleDateString("uz-UZ")}
+                    </span>
+                  </div>
 
-                <div className="admin-report-row-right">
-                  <strong
-                    className={
-                      item.type === "kirim" ? "admin-report-positive" : "admin-report-negative"
-                    }
-                  >
-                    {item.type === "kirim" ? "+" : "-"}
-                    {item.amount.toLocaleString("uz-UZ")} so‘m
+                  <strong className="admin-report-positive">
+                    +{order.total.toLocaleString("uz-UZ")} so‘m
                   </strong>
-
-                  {item.raw && (
-                    <button
-                      type="button"
-                      className="admin-danger"
-                      onClick={() => handleDeleteExpense(item.raw.id)}
-                    >
-                      O‘chirish
-                    </button>
-                  )}
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         )}
       </div>

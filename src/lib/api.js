@@ -41,8 +41,18 @@ function mapProduct(row) {
     deliveryAvailable: row.delivery_available ?? true,
     deliveryPrice: row.delivery_price != null ? Number(row.delivery_price) : null,
     warranty: row.warranty || "",
+    costPrice: row.cost_price != null ? Number(row.cost_price) : null,
   };
 }
+
+// Columns safe to expose to the storefront (excludes cost_price, which is
+// only for the admin's own profit tracking and must never reach customers).
+const PUBLIC_PRODUCT_COLUMNS =
+  "id, name, brand, category, price, old_price, stock, rating, reviews, image, " +
+  "description, specs, is_active, phone_finder_enabled, segment, ram_gb, storage_gb, os, " +
+  "primary_uses, camera_score, performance_score, battery_score, display_score, gaming_score, " +
+  "charging_score, software_score, refresh_rate_hz, battery_capacity_mah, chipset, " +
+  "delivery_available, delivery_price, warranty, created_at";
 
 function mapBanner(row) {
   return {
@@ -82,15 +92,6 @@ function mapOrder(row) {
   };
 }
 
-function mapExpense(row) {
-  return {
-    id: row.id,
-    description: row.description,
-    amount: Number(row.amount),
-    createdAt: row.created_at,
-  };
-}
-
 function mapTradeIn(row) {
   return {
     id: row.id,
@@ -120,7 +121,7 @@ function mapTradeIn(row) {
 export async function getProducts() {
   const { data, error } = await supabase
     .from("products")
-    .select("*")
+    .select(PUBLIC_PRODUCT_COLUMNS)
     .eq("is_active", true)
     .order("created_at", { ascending: false });
 
@@ -131,7 +132,7 @@ export async function getProducts() {
 export async function getProductById(id) {
   const { data, error } = await supabase
     .from("products")
-    .select("*")
+    .select(PUBLIC_PRODUCT_COLUMNS)
     .eq("id", id)
     .eq("is_active", true)
     .maybeSingle();
@@ -431,19 +432,3 @@ export async function adminUpdateTradeIn(id, updates) {
   return mapTradeIn(updated);
 }
 
-export async function adminGetExpenses() {
-  const { expenses } = await adminRequest("admin-expenses");
-  return expenses.map(mapExpense);
-}
-
-export async function adminCreateExpense(expense) {
-  const { expense: created } = await adminRequest("admin-expenses", {
-    method: "POST",
-    body: expense,
-  });
-  return mapExpense(created);
-}
-
-export async function adminDeleteExpense(id) {
-  return adminRequest("admin-expenses", { method: "DELETE", id });
-}
