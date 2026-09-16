@@ -8,6 +8,7 @@ import {
   adminUpdateOrderStatus,
 } from "../../lib/api";
 import { scanQrCode } from "../../lib/telegram";
+import { CURRENCIES, formatMoney } from "../../lib/currency";
 
 const STATUS_OPTIONS = [
   { value: "new", label: "Yangi" },
@@ -46,6 +47,7 @@ function AdminOrders() {
     installmentDrafts[order.id] || {
       months: order.installmentMonths || "",
       amount: order.installmentMonthlyAmount || "",
+      currency: order.installmentCurrency || "UZS",
     };
 
   const updateDraft = (order, field, value) => {
@@ -62,7 +64,8 @@ function AdminOrders() {
     const updated = await adminSetInstallmentTerms(
       order.id,
       Number(draft.months),
-      Number(draft.amount)
+      Number(draft.amount),
+      draft.currency || "UZS"
     );
     setOrders((prev) => prev.map((o) => (o.id === order.id ? updated : o)));
   };
@@ -122,7 +125,7 @@ function AdminOrders() {
             <strong>Manzil:</strong> {scannedOrder.region}, {scannedOrder.address}
           </p>
           <p>
-            <strong>Jami:</strong> {scannedOrder.total.toLocaleString("uz-UZ")} so‘m
+            <strong>Jami:</strong> {formatMoney(scannedOrder.total, scannedOrder.currency)}
           </p>
           <p>
             <strong>Holat:</strong>{" "}
@@ -136,7 +139,7 @@ function AdminOrders() {
                 <span>{item.name}</span>
                 <span>x{item.quantity}</span>
                 <strong>
-                  {(item.price * item.quantity).toLocaleString("uz-UZ")} so‘m
+                  {formatMoney(item.price * item.quantity, scannedOrder.currency)}
                 </strong>
               </div>
             ))}
@@ -178,7 +181,7 @@ function AdminOrders() {
                     </div>
 
                     <div className="admin-order-summary-right">
-                      <strong>{order.total.toLocaleString("uz-UZ")} so‘m</strong>
+                      <strong>{formatMoney(order.total, order.currency)}</strong>
                       {expanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                     </div>
                   </button>
@@ -207,7 +210,7 @@ function AdminOrders() {
                             <span>{item.name}</span>
                             <span>x{item.quantity}</span>
                             <strong>
-                              {(item.price * item.quantity).toLocaleString("uz-UZ")} so‘m
+                              {formatMoney(item.price * item.quantity, order.currency)}
                             </strong>
                           </div>
                         ))}
@@ -230,6 +233,21 @@ function AdminOrders() {
                       {order.isInstallment && (
                         <div className="admin-installment-editor">
                           <span>Bo‘lib to‘lash shartlari</span>
+
+                          <div className="admin-currency-options">
+                            {CURRENCIES.map((c) => (
+                              <label key={c.code} className="admin-currency-option">
+                                <input
+                                  type="radio"
+                                  name={`installment-currency-${order.id}`}
+                                  checked={(draft.currency || "UZS") === c.code}
+                                  onChange={() => updateDraft(order, "currency", c.code)}
+                                />
+                                <span>{c.label}</span>
+                              </label>
+                            ))}
+                          </div>
+
                           <div className="admin-installment-inputs">
                             <input
                               type="number"

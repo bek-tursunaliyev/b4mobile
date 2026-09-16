@@ -17,6 +17,7 @@ import {
 import "./products.css";
 import { getProductById } from "../lib/api";
 import { useCart } from "../hooks/useCart";
+import { formatMoney } from "../lib/currency";
 
 function Products() {
   const { id } = useParams();
@@ -108,7 +109,7 @@ function Products() {
 
   const deliveryText = deliveryAvailable
     ? product.deliveryPrice
-      ? `${Number(product.deliveryPrice).toLocaleString("uz-UZ")} so‘m`
+      ? formatMoney(product.deliveryPrice, product.currency)
       : "Bepul"
     : "Mavjud emas";
 
@@ -267,16 +268,12 @@ function Products() {
           <div className="detail-price">
 
             <strong>
-              {product.price.toLocaleString("uz-UZ")}{" "}
-              so‘m
+              {formatMoney(product.price, product.currency)}
             </strong>
 
             {product.oldPrice && (
               <del>
-                {product.oldPrice.toLocaleString(
-                  "uz-UZ"
-                )}{" "}
-                so‘m
+                {formatMoney(product.oldPrice, product.currency)}
               </del>
             )}
 

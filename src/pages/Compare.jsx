@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Search, X } from "lucide-react";
 
 import { getProducts } from "../lib/api";
+import { formatMoney } from "../lib/currency";
 import "./compare.css";
 
 const MAX_SLOTS = 3;
@@ -72,7 +73,7 @@ function Compare() {
         label: "Narx",
         invert: true,
         value: (p) => p.price,
-        display: (p) => `${p.price.toLocaleString("uz-UZ")} so‘m`,
+        display: (p) => formatMoney(p.price, p.currency),
       },
       {
         label: "Omborda",
@@ -147,7 +148,7 @@ function Compare() {
                     >
                       <img src={p.image} alt={p.name} loading="lazy" />
                       <span>{p.name}</span>
-                      <strong>{p.price.toLocaleString("uz-UZ")} so‘m</strong>
+                      <strong>{formatMoney(p.price, p.currency)}</strong>
                     </button>
                   ))
                 )}

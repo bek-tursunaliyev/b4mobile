@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Check } from "lucide-react";
 
 import { adminGetTradeIns, adminUpdateTradeIn } from "../../lib/api";
+import { CURRENCIES, formatMoney } from "../../lib/currency";
 
 const STATUS_OPTIONS = [
   { value: "pending", label: "Ko‘rib chiqilmoqda" },
@@ -13,6 +14,7 @@ function AdminTradeIns() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [priceDrafts, setPriceDrafts] = useState({});
+  const [currencyDrafts, setCurrencyDrafts] = useState({});
   const [editingIds, setEditingIds] = useState({});
 
   const load = () => {
@@ -22,6 +24,9 @@ function AdminTradeIns() {
         setRequests(data);
         setPriceDrafts(
           Object.fromEntries(data.map((r) => [r.id, r.offeredPrice ?? ""]))
+        );
+        setCurrencyDrafts(
+          Object.fromEntries(data.map((r) => [r.id, r.offeredPriceCurrency || "UZS"]))
         );
       })
       .finally(() => setLoading(false));
@@ -40,6 +45,7 @@ function AdminTradeIns() {
 
     const updated = await adminUpdateTradeIn(req.id, {
       offeredPrice: price,
+      offeredPriceCurrency: currencyDrafts[req.id] || "UZS",
       status: "priced",
     });
     setRequests((prev) => prev.map((r) => (r.id === req.id ? updated : r)));
@@ -104,23 +110,40 @@ function AdminTradeIns() {
 
                   {isEditingPrice(req) ? (
                     <div className="admin-tradein-price">
-                      <input
-                        type="number"
-                        placeholder="Narx"
-                        value={priceDrafts[req.id] ?? ""}
-                        onChange={(e) =>
-                          setPriceDrafts((prev) => ({ ...prev, [req.id]: e.target.value }))
-                        }
-                      />
-                      <button type="button" onClick={() => handlePriceSubmit(req)}>
-                        Belgilash
-                      </button>
+                      <div className="admin-currency-options">
+                        {CURRENCIES.map((c) => (
+                          <label key={c.code} className="admin-currency-option">
+                            <input
+                              type="radio"
+                              name={`tradein-currency-${req.id}`}
+                              checked={(currencyDrafts[req.id] || "UZS") === c.code}
+                              onChange={() =>
+                                setCurrencyDrafts((prev) => ({ ...prev, [req.id]: c.code }))
+                              }
+                            />
+                            <span>{c.label}</span>
+                          </label>
+                        ))}
+                      </div>
+                      <div className="admin-tradein-price-input-row">
+                        <input
+                          type="number"
+                          placeholder="Narx"
+                          value={priceDrafts[req.id] ?? ""}
+                          onChange={(e) =>
+                            setPriceDrafts((prev) => ({ ...prev, [req.id]: e.target.value }))
+                          }
+                        />
+                        <button type="button" onClick={() => handlePriceSubmit(req)}>
+                          Belgilash
+                        </button>
+                      </div>
                     </div>
                   ) : (
                     <div className="admin-tradein-priced">
                       <span className="admin-tradein-priced-tick">
                         <Check size={14} />
-                        {Number(req.offeredPrice).toLocaleString("uz-UZ")} so‘m
+                        {formatMoney(req.offeredPrice, req.offeredPriceCurrency)}
                       </span>
                       <button type="button" onClick={() => startEditPrice(req)}>
                         Narxni o‘zgartirish

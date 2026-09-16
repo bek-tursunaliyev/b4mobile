@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Camera, Check, Smartphone } from "lucide-react";
 
 import { getMyTradeIns, submitTradeIn } from "../lib/api";
+import { formatMoney } from "../lib/currency";
 import "./myphone.css";
 
 const BRANDS = ["Apple", "Samsung", "Xiaomi", "Realme", "Huawei", "Boshqa"];
@@ -310,7 +311,7 @@ function MyPhone() {
                     {STATUS_LABELS[req.status] || req.status}
                   </span>
                   {req.offeredPrice && (
-                    <strong>{req.offeredPrice.toLocaleString("uz-UZ")} so‘m</strong>
+                    <strong>{formatMoney(req.offeredPrice, req.offeredPriceCurrency)}</strong>
                   )}
                 </div>
               </div>

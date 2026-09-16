@@ -494,6 +494,59 @@
   color: #111;
 }
 
+.admin-currency-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.admin-currency-row > span {
+  color: #444;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.admin-currency-options {
+  display: flex;
+  gap: 8px;
+}
+
+.admin-currency-option {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center;
+  gap: 6px;
+
+  padding: 8px 12px;
+
+  border: 1px solid #e3e3e3;
+  border-radius: 20px;
+  background: #fafafa;
+
+  cursor: pointer;
+}
+
+.admin-currency-option:has(input:checked) {
+  border-color: #111;
+  background: #111;
+}
+
+.admin-currency-option:has(input:checked) span {
+  color: #fff;
+}
+
+.admin-currency-option input {
+  width: auto;
+  accent-color: #111;
+}
+
+.admin-currency-option span {
+  font-size: 11px;
+  font-weight: 600;
+  color: #444;
+}
+
 .admin-profit-hint {
   margin: -6px 0 0;
 
@@ -900,6 +953,10 @@
   color: #444;
 }
 
+.admin-installment-editor .admin-currency-options {
+  margin-bottom: 8px;
+}
+
 .admin-installment-inputs {
   display: flex;
   gap: 8px;
@@ -1038,6 +1095,20 @@
 }
 
 .admin-tradein-price {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-tradein-price .admin-currency-options {
+  gap: 6px;
+}
+
+.admin-tradein-price .admin-currency-option {
+  padding: 5px 9px;
+}
+
+.admin-tradein-price-input-row {
   display: flex;
   gap: 6px;
 }

@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 
 import { useCart } from "../hooks/useCart";
+import { formatMoney } from "../lib/currency";
 import "./cart.css";
 
 function Cart() {
@@ -21,20 +22,24 @@ function Cart() {
   const {
     cart,
     cartCount,
-    cartTotal,
     increaseQuantity,
     decreaseQuantity,
     removeFromCart,
     clearCart,
   } = useCart();
 
-  const formatPrice = (price) => {
-    return `${price.toLocaleString("uz-UZ")} so‘m`;
-  };
+  // Cart items can be priced in different currencies (admin sets currency
+  // per product). Sum each currency separately instead of adding raw
+  // numbers together, which would silently produce a meaningless total.
+  const totalsByCurrency = cart.reduce((acc, item) => {
+    const currency = item.currency || "UZS";
+    acc[currency] = (acc[currency] || 0) + item.price * item.quantity;
+    return acc;
+  }, {});
 
-  const deliveryPrice = cartTotal >= 500000 ? 0 : 30000;
-
-  const totalPrice = cartTotal + deliveryPrice;
+  const currencies = Object.keys(totalsByCurrency);
+  const uzsSubtotal = totalsByCurrency.UZS || 0;
+  const deliveryPrice = uzsSubtotal >= 500000 || !totalsByCurrency.UZS ? 0 : 30000;
 
   if (cart.length === 0) {
     return (
@@ -243,12 +248,12 @@ function Cart() {
                   <div className="cart-item-price">
 
                     <strong>
-                      {formatPrice(itemTotal)}
+                      {formatMoney(itemTotal, item.currency)}
                     </strong>
 
                     {item.quantity > 1 && (
                       <span>
-                        {formatPrice(item.price)} / dona
+                        {formatMoney(item.price, item.currency)} / dona
                       </span>
                     )}
 
@@ -272,17 +277,17 @@ function Cart() {
                 Buyurtma
               </h2>
 
-              <div className="summary-row">
+              {currencies.map((currency) => (
+                <div className="summary-row" key={currency}>
+                  <span>
+                    Mahsulotlar{currencies.length > 1 ? ` (${currency})` : ""}
+                  </span>
 
-                <span>
-                  Mahsulotlar
-                </span>
-
-                <strong>
-                  {formatPrice(cartTotal)}
-                </strong>
-
-              </div>
+                  <strong>
+                    {formatMoney(totalsByCurrency[currency], currency)}
+                  </strong>
+                </div>
+              ))}
 
               <div className="summary-row">
 
@@ -299,24 +304,27 @@ function Cart() {
                 >
                   {deliveryPrice === 0
                     ? "Bepul"
-                    : formatPrice(deliveryPrice)}
+                    : formatMoney(deliveryPrice, "UZS")}
                 </strong>
 
               </div>
 
               <div className="summary-divider" />
 
-              <div className="summary-total">
+              {currencies.map((currency) => (
+                <div className="summary-total" key={currency}>
+                  <span>
+                    Jami{currencies.length > 1 ? ` (${currency})` : ""}
+                  </span>
 
-                <span>
-                  Jami
-                </span>
-
-                <strong>
-                  {formatPrice(totalPrice)}
-                </strong>
-
-              </div>
+                  <strong>
+                    {formatMoney(
+                      totalsByCurrency[currency] + (currency === "UZS" ? deliveryPrice : 0),
+                      currency
+                    )}
+                  </strong>
+                </div>
+              ))}
 
               <button
                 type="button"

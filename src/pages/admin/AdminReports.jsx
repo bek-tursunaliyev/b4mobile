@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import { adminGetOrders, adminGetProducts } from "../../lib/api";
+import { formatMoney } from "../../lib/currency";
 
 function AdminReports() {
   const [orders, setOrders] = useState([]);
@@ -20,18 +21,32 @@ function AdminReports() {
   }, []);
 
   const validOrders = orders.filter((o) => o.status !== "cancelled");
-  const income = validOrders.reduce((sum, o) => sum + o.total, 0);
+
+  // Orders (and the products in them) can be priced in different
+  // currencies, so income/profit are tracked per currency instead of
+  // being summed together into one misleading number.
+  const incomeByCurrency = validOrders.reduce((acc, o) => {
+    const currency = o.currency || "UZS";
+    acc[currency] = (acc[currency] || 0) + o.total;
+    return acc;
+  }, {});
 
   const productById = Object.fromEntries(products.map((p) => [p.id, p]));
 
-  const netProfit = validOrders.reduce((sum, order) => {
+  const profitByCurrency = validOrders.reduce((acc, order) => {
+    const currency = order.currency || "UZS";
     const orderProfit = (order.items || []).reduce((itemSum, item) => {
       const product = productById[item.id];
       if (!product || product.costPrice == null) return itemSum;
+      if ((product.currency || "UZS") !== currency) return itemSum;
       return itemSum + (item.price - product.costPrice) * item.quantity;
     }, 0);
-    return sum + orderProfit;
-  }, 0);
+    acc[currency] = (acc[currency] || 0) + orderProfit;
+    return acc;
+  }, {});
+
+  const incomeCurrencies = Object.keys(incomeByCurrency);
+  const profitCurrencies = Object.keys(profitByCurrency);
 
   if (loading) {
     return <p className="admin-loading">Yuklanmoqda...</p>;
@@ -46,15 +61,31 @@ function AdminReports() {
       <div className="admin-stats-grid admin-report-stats">
         <div className="admin-stat-card">
           <div>
-            <strong>{income.toLocaleString("uz-UZ")} so‘m</strong>
+            <strong>
+              {incomeCurrencies.length === 0
+                ? formatMoney(0, "UZS")
+                : incomeCurrencies.map((c) => formatMoney(incomeByCurrency[c], c)).join(" + ")}
+            </strong>
             <span>Jami kirim</span>
           </div>
         </div>
 
         <div className="admin-stat-card">
           <div>
-            <strong className={netProfit >= 0 ? "admin-report-positive" : "admin-report-negative"}>
-              {netProfit.toLocaleString("uz-UZ")} so‘m
+            <strong>
+              {profitCurrencies.length === 0 ? (
+                formatMoney(0, "UZS")
+              ) : (
+                profitCurrencies.map((c, i) => (
+                  <span
+                    key={c}
+                    className={profitByCurrency[c] >= 0 ? "admin-report-positive" : "admin-report-negative"}
+                  >
+                    {i > 0 ? " + " : ""}
+                    {formatMoney(profitByCurrency[c], c)}
+                  </span>
+                ))
+              )}
             </strong>
             <span>Sof foyda</span>
           </div>
@@ -83,7 +114,7 @@ function AdminReports() {
                   </div>
 
                   <strong className="admin-report-positive">
-                    +{order.total.toLocaleString("uz-UZ")} so‘m
+                    +{formatMoney(order.total, order.currency)}
                   </strong>
                 </div>
               ))}

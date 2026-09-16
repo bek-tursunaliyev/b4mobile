@@ -8,6 +8,7 @@ import {
   adminUpdateProduct,
   adminUploadImage,
 } from "../../lib/api";
+import { CURRENCIES, formatMoney } from "../../lib/currency";
 
 const SEGMENTS = [
   { id: "flagman", label: "Flagman" },
@@ -48,6 +49,7 @@ const EMPTY_FORM = {
   price: "",
   oldPrice: "",
   costPrice: "",
+  currency: "UZS",
   stock: "",
   image: "",
   description: "",
@@ -110,6 +112,7 @@ function AdminProducts() {
       price: product.price,
       oldPrice: product.oldPrice || "",
       costPrice: product.costPrice ?? "",
+      currency: product.currency || "UZS",
       stock: product.stock,
       image: product.image || "",
       description: product.description || "",
@@ -214,6 +217,7 @@ function AdminProducts() {
       price: Number(form.price),
       oldPrice: form.oldPrice ? Number(form.oldPrice) : null,
       costPrice: form.costPrice !== "" ? Number(form.costPrice) : null,
+      currency: form.currency,
       stock: form.stock ? Number(form.stock) : 0,
       image: form.image || null,
       description: form.description.trim() || null,
@@ -304,9 +308,26 @@ function AdminProducts() {
             </label>
           </div>
 
+          <div className="admin-currency-row">
+            <span>Narx valyutasi</span>
+            <div className="admin-currency-options">
+              {CURRENCIES.map((c) => (
+                <label key={c.code} className="admin-currency-option">
+                  <input
+                    type="radio"
+                    name="product-currency"
+                    checked={form.currency === c.code}
+                    onChange={() => setForm({ ...form, currency: c.code })}
+                  />
+                  <span>{c.label}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
           <div className="admin-form-row">
             <label>
-              <span>Narx (so‘m) *</span>
+              <span>Narx *</span>
               <input
                 type="number"
                 value={form.price}
@@ -349,7 +370,7 @@ function AdminProducts() {
             <p className="admin-profit-hint">
               Bitta mahsulotdan sof foyda:{" "}
               <strong>
-                {(Number(form.price) - Number(form.costPrice)).toLocaleString("uz-UZ")} so‘m
+                {formatMoney(Number(form.price) - Number(form.costPrice), form.currency)}
               </strong>
             </p>
           )}
@@ -650,7 +671,7 @@ function AdminProducts() {
                     </td>
                     <td>{product.name}</td>
                     <td>{product.category}</td>
-                    <td>{product.price.toLocaleString("uz-UZ")} so‘m</td>
+                    <td>{formatMoney(product.price, product.currency)}</td>
                     <td>{product.stock}</td>
                     <td>
                       <button

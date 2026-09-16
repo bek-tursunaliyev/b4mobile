@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 
 import { getMyOrders, getMyTradeIns } from "../lib/api";
+import { formatMoney } from "../lib/currency";
 import "./profile.css";
 
 function Profile() {
@@ -31,9 +32,14 @@ function Profile() {
     });
   }, []);
 
-  const totalSpent = orders
+  const totalSpentByCurrency = orders
     .filter((o) => o.status !== "cancelled")
-    .reduce((sum, o) => sum + o.total, 0);
+    .reduce((acc, o) => {
+      const currency = o.currency || "UZS";
+      acc[currency] = (acc[currency] || 0) + o.total;
+      return acc;
+    }, {});
+  const spentCurrencies = Object.keys(totalSpentByCurrency);
 
   const initials = user?.first_name?.[0]?.toUpperCase() || "?";
   const fullName = [user?.first_name, user?.last_name].filter(Boolean).join(" ");
@@ -89,7 +95,13 @@ function Profile() {
             <span>Buyurtmalar</span>
           </div>
           <div className="profile-stat">
-            <strong>{totalSpent.toLocaleString("uz-UZ")} so‘m</strong>
+            <strong>
+              {spentCurrencies.length === 0
+                ? formatMoney(0, "UZS")
+                : spentCurrencies
+                    .map((c) => formatMoney(totalSpentByCurrency[c], c))
+                    .join(" + ")}
+            </strong>
             <span>Umumiy xarid</span>
           </div>
         </div>
@@ -130,7 +142,7 @@ function Profile() {
                     <strong>{order.orderCode}</strong>
                     <span>{new Date(order.createdAt).toLocaleDateString("uz-UZ")}</span>
                   </div>
-                  <strong>{order.total.toLocaleString("uz-UZ")} so‘m</strong>
+                  <strong>{formatMoney(order.total, order.currency)}</strong>
                 </div>
               ))}
             </div>
@@ -152,7 +164,9 @@ function Profile() {
                   </div>
 
                   {req.status === "priced" && req.offeredPrice ? (
-                    <strong>{req.offeredPrice.toLocaleString("uz-UZ")} so‘m taklif qilindi</strong>
+                    <strong>
+                      {formatMoney(req.offeredPrice, req.offeredPriceCurrency)} taklif qilindi
+                    </strong>
                   ) : req.status === "rejected" ? (
                     <span className="profile-tradein-rejected">Rad etildi</span>
                   ) : (

@@ -14,6 +14,7 @@ import { QRCodeSVG } from "qrcode.react";
 
 import { useCart } from "../hooks/useCart";
 import { createOrder } from "../lib/api";
+import { formatMoney } from "../lib/currency";
 import "./checkout.css";
 
 const PAYMENT_METHODS = [
@@ -24,7 +25,7 @@ const PAYMENT_METHODS = [
 function Checkout() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { cart, cartTotal, clearCart } = useCart();
+  const { cart, clearCart } = useCart();
 
   const [form, setForm] = useState({
     fullName: "",
@@ -40,10 +41,21 @@ function Checkout() {
   const [submitError, setSubmitError] = useState("");
   const [order, setOrder] = useState(null);
 
-  const deliveryPrice = cartTotal >= 500000 ? 0 : 30000;
-  const totalPrice = cartTotal + deliveryPrice;
+  // Cart items can be priced in different currencies (admin sets currency
+  // per product). A single order only has one currency column, so mixed
+  // carts are blocked from checking out together rather than silently
+  // summing incompatible numbers into one wrong total.
+  const totalsByCurrency = cart.reduce((acc, item) => {
+    const currency = item.currency || "UZS";
+    acc[currency] = (acc[currency] || 0) + item.price * item.quantity;
+    return acc;
+  }, {});
+  const cartCurrencies = Object.keys(totalsByCurrency);
+  const currency = cartCurrencies[0] || "UZS";
+  const cartTotal = totalsByCurrency[currency] || 0;
 
-  const formatPrice = (price) => `${price.toLocaleString("uz-UZ")} so‘m`;
+  const deliveryPrice = currency === "UZS" ? (cartTotal >= 500000 ? 0 : 30000) : 0;
+  const totalPrice = cartTotal + deliveryPrice;
 
   const handleChange = (field) => (e) => {
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
@@ -103,6 +115,7 @@ function Checkout() {
         subtotal: cartTotal,
         deliveryPrice,
         total: totalPrice,
+        currency,
         isInstallment: payment === "installment",
       });
 
@@ -110,6 +123,7 @@ function Checkout() {
         id: result.orderCode,
         phone: form.phone,
         total: totalPrice,
+        currency,
         isInstallment: payment === "installment",
       });
       clearCart();
@@ -155,7 +169,7 @@ function Checkout() {
 
             <div className="order-success-total">
               <span>To‘lov summasi</span>
-              <strong>{formatPrice(order.total)}</strong>
+              <strong>{formatMoney(order.total, order.currency)}</strong>
             </div>
 
             <div className="order-success-actions">
@@ -168,6 +182,44 @@ function Checkout() {
                 Bosh sahifaga qaytish
               </Link>
             </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  // MIXED CURRENCY CART
+
+  if (cartCurrencies.length > 1) {
+    return (
+      <main className="checkout-page">
+        <div className="checkout-container">
+          <button
+            type="button"
+            className="checkout-back"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft size={18} />
+            Orqaga
+          </button>
+
+          <div className="empty-checkout">
+            <div className="empty-checkout-icon">
+              <ShoppingBag size={42} />
+            </div>
+
+            <h1>Savatda turli valyutadagi mahsulotlar bor</h1>
+
+            <p>
+              Bitta buyurtmada faqat bitta valyutadagi mahsulotlar bo‘lishi kerak.
+              Iltimos, savatdan bir xil valyutadagi mahsulotlarni qoldirib, boshqalarini
+              alohida buyurtma qiling.
+            </p>
+
+            <Link to="/cart" className="continue-shopping">
+              Savatga qaytish
+              <ArrowRight size={18} />
+            </Link>
           </div>
         </div>
       </main>
@@ -344,7 +396,7 @@ function Checkout() {
                     </div>
 
                     <strong>
-                      {formatPrice(item.price * item.quantity)}
+                      {formatMoney(item.price * item.quantity, item.currency)}
                     </strong>
                   </div>
                 ))}
@@ -354,13 +406,13 @@ function Checkout() {
 
               <div className="summary-row">
                 <span>Mahsulotlar</span>
-                <strong>{formatPrice(cartTotal)}</strong>
+                <strong>{formatMoney(cartTotal, currency)}</strong>
               </div>
 
               <div className="summary-row">
                 <span>Yetkazib berish</span>
                 <strong className={deliveryPrice === 0 ? "free-delivery" : ""}>
-                  {deliveryPrice === 0 ? "Bepul" : formatPrice(deliveryPrice)}
+                  {deliveryPrice === 0 ? "Bepul" : formatMoney(deliveryPrice, "UZS")}
                 </strong>
               </div>
 
@@ -368,7 +420,7 @@ function Checkout() {
 
               <div className="summary-total">
                 <span>Jami</span>
-                <strong>{formatPrice(totalPrice)}</strong>
+                <strong>{formatMoney(totalPrice, currency)}</strong>
               </div>
 
               {submitError && <p className="field-error">{submitError}</p>}

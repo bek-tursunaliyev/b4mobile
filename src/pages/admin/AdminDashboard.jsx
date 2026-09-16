@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 
 import { adminGetOrders, adminGetProducts } from "../../lib/api";
+import { formatMoney } from "../../lib/currency";
 
 function AdminDashboard() {
   const [products, setProducts] = useState([]);
@@ -26,9 +27,18 @@ function AdminDashboard() {
 
   const newOrders = orders.filter((o) => o.status === "new").length;
 
-  const revenue = orders
+  const revenueByCurrency = orders
     .filter((o) => o.status !== "cancelled")
-    .reduce((sum, o) => sum + o.total, 0);
+    .reduce((acc, o) => {
+      const currency = o.currency || "UZS";
+      acc[currency] = (acc[currency] || 0) + o.total;
+      return acc;
+    }, {});
+  const revenueCurrencies = Object.keys(revenueByCurrency);
+  const revenue =
+    revenueCurrencies.length === 0
+      ? formatMoney(0, "UZS")
+      : revenueCurrencies.map((c) => formatMoney(revenueByCurrency[c], c)).join(" + ");
 
   const cards = [
     {
@@ -46,7 +56,7 @@ function AdminDashboard() {
     {
       icon: TrendingUp,
       label: "Umumiy tushum",
-      value: `${revenue.toLocaleString("uz-UZ")} so‘m`,
+      value: revenue,
       to: "/admin/orders",
     },
     {
@@ -111,7 +121,7 @@ function AdminDashboard() {
                   <tr key={order.id}>
                     <td>{order.orderCode}</td>
                     <td>{order.fullName}</td>
-                    <td>{order.total.toLocaleString("uz-UZ")} so‘m</td>
+                    <td>{formatMoney(order.total, order.currency)}</td>
                     <td>
                       <span className={`admin-status admin-status-${order.status}`}>
                         {order.status}

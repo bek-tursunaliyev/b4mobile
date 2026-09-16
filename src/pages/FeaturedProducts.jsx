@@ -4,6 +4,7 @@ import { Check, ShoppingCart } from "lucide-react";
 
 import { getProducts } from "../lib/api";
 import { useCart } from "../hooks/useCart";
+import { formatMoney } from "../lib/currency";
 
 function FeaturedProducts() {
   const navigate = useNavigate();
@@ -59,11 +60,11 @@ function FeaturedProducts() {
                 <div className="product-bottom">
                   <div>
                     <strong>
-                      {product.price.toLocaleString("uz-UZ")} so‘m
+                      {formatMoney(product.price, product.currency)}
                     </strong>
                     {product.oldPrice && (
                       <del>
-                        {product.oldPrice.toLocaleString("uz-UZ")} so‘m
+                        {formatMoney(product.oldPrice, product.currency)}
                       </del>
                     )}
                   </div>

@@ -11,6 +11,7 @@ import {
 
 import { getProducts } from "../lib/api";
 import { useCart } from "../hooks/useCart";
+import { formatMoney } from "../lib/currency";
 
 import "./catalog.css";
 
@@ -643,18 +644,12 @@ function Catalog() {
                           <div className="catalog-price">
 
                             <strong>
-                              {product.price.toLocaleString(
-                                "uz-UZ"
-                              )}{" "}
-                              so‘m
+                              {formatMoney(product.price, product.currency)}
                             </strong>
 
                             {product.oldPrice && (
                               <del>
-                                {product.oldPrice.toLocaleString(
-                                  "uz-UZ"
-                                )}{" "}
-                                so‘m
+                                {formatMoney(product.oldPrice, product.currency)}
                               </del>
                             )}
 

@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, ChevronDown, ChevronUp, Package } from "lucide-r
 import { QRCodeSVG } from "qrcode.react";
 
 import { getMyOrders } from "../lib/api";
+import { formatMoney } from "../lib/currency";
 import "./orders.css";
 
 const STATUS_LABELS = {
@@ -101,7 +102,7 @@ function Orders() {
                       <span className={`order-status order-status-${order.status}`}>
                         {STATUS_LABELS[order.status] || order.status}
                       </span>
-                      <strong>{order.total.toLocaleString("uz-UZ")} so‘m</strong>
+                      <strong>{formatMoney(order.total, order.currency)}</strong>
                       {expanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                     </div>
                   </button>
@@ -113,7 +114,7 @@ function Orders() {
                           <span>{item.name}</span>
                           <span>x{item.quantity}</span>
                           <strong>
-                            {(item.price * item.quantity).toLocaleString("uz-UZ")} so‘m
+                            {formatMoney(item.price * item.quantity, order.currency)}
                           </strong>
                         </div>
                       ))}
@@ -133,7 +134,7 @@ function Orders() {
                               </span>
                               <span>
                                 Oylik to‘lov:{" "}
-                                {order.installmentMonthlyAmount.toLocaleString("uz-UZ")} so‘m
+                                {formatMoney(order.installmentMonthlyAmount, order.installmentCurrency)}
                               </span>
                             </>
                           ) : (

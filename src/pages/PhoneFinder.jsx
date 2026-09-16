@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 
 import { getPhoneFinderQuestions, getPhoneFinderRecommendations } from "../lib/api";
+import { formatMoney } from "../lib/currency";
 import "./phonefinder.css";
 
 const STEP_KEYS = ["budgetId", "purpose", "ram", "storage", "priority", "brand"];
@@ -208,7 +209,7 @@ function PhoneFinder() {
                         <span className="finder-result-brand">{product.brand}</span>
                         <strong>{product.name}</strong>
                         <span className="finder-result-price">
-                          {product.price.toLocaleString("uz-UZ")} so‘m
+                          {formatMoney(product.price, product.currency)}
                         </span>
                       </div>
 

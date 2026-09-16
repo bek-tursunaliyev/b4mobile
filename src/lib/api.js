@@ -42,6 +42,7 @@ function mapProduct(row) {
     deliveryPrice: row.delivery_price != null ? Number(row.delivery_price) : null,
     warranty: row.warranty || "",
     costPrice: row.cost_price != null ? Number(row.cost_price) : null,
+    currency: row.currency === "USD" ? "USD" : "UZS",
   };
 }
 
@@ -52,7 +53,7 @@ const PUBLIC_PRODUCT_COLUMNS =
   "description, specs, is_active, phone_finder_enabled, segment, ram_gb, storage_gb, os, " +
   "primary_uses, camera_score, performance_score, battery_score, display_score, gaming_score, " +
   "charging_score, software_score, refresh_rate_hz, battery_capacity_mah, chipset, " +
-  "delivery_available, delivery_price, warranty, created_at";
+  "delivery_available, delivery_price, warranty, currency, created_at";
 
 function mapBanner(row) {
   return {
@@ -79,6 +80,7 @@ function mapOrder(row) {
     subtotal: Number(row.subtotal),
     deliveryPrice: Number(row.delivery_price),
     total: Number(row.total),
+    currency: row.currency === "USD" ? "USD" : "UZS",
     telegramUserId: row.telegram_user_id,
     telegramUsername: row.telegram_username,
     status: row.status,
@@ -88,6 +90,7 @@ function mapOrder(row) {
     installmentMonthlyAmount: row.installment_monthly_amount
       ? Number(row.installment_monthly_amount)
       : null,
+    installmentCurrency: row.installment_currency === "USD" ? "USD" : "UZS",
     pickedUpAt: row.picked_up_at || null,
   };
 }
@@ -108,6 +111,7 @@ function mapTradeIn(row) {
     image: row.image,
     status: row.status,
     offeredPrice: row.offered_price ? Number(row.offered_price) : null,
+    offeredPriceCurrency: row.offered_price_currency === "USD" ? "USD" : "UZS",
     telegramUserId: row.telegram_user_id,
     telegramUsername: row.telegram_username,
     createdAt: row.created_at,
@@ -378,7 +382,7 @@ export async function adminGetOrderByCode(code) {
   return order ? mapOrder(order) : null;
 }
 
-export async function adminSetInstallmentTerms(id, months, monthlyAmount) {
+export async function adminSetInstallmentTerms(id, months, monthlyAmount, currency = "UZS") {
   const { order } = await adminRequest("admin-orders", {
     method: "PATCH",
     id,
@@ -386,6 +390,7 @@ export async function adminSetInstallmentTerms(id, months, monthlyAmount) {
       isInstallment: true,
       installmentMonths: months,
       installmentMonthlyAmount: monthlyAmount,
+      installmentCurrency: currency,
     },
   });
   return mapOrder(order);
