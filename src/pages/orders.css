@@ -139,6 +139,11 @@
   color: #d33a3a;
 }
 
+.order-status-picked_up {
+  background: #eaf7ee;
+  color: #1a9a4a;
+}
+
 .order-card-details {
   padding: 4px 18px 18px;
   border-top: 1px solid #f0f0f0;
@@ -169,6 +174,55 @@
 
   color: #888;
   font-size: 11.5px;
+}
+
+.order-installment-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  margin-top: 14px;
+  padding: 12px 14px;
+
+  background: #fff4de;
+  border-radius: 12px;
+
+  font-size: 11.5px;
+  color: #8a6a10;
+}
+
+.order-installment-block strong {
+  font-size: 12px;
+  color: #6b5209;
+}
+
+.order-installment-block small {
+  margin-top: 4px;
+  color: #a3894a;
+  font-size: 10.5px;
+}
+
+.order-card-qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+
+  margin-top: 16px;
+  padding: 16px;
+
+  background: #f7f7f8;
+  border-radius: 12px;
+}
+
+.order-card-qr svg {
+  border-radius: 6px;
+}
+
+.order-card-qr span {
+  color: #888;
+  font-size: 10.5px;
+  font-weight: 600;
 }
 
 /* ==================================================

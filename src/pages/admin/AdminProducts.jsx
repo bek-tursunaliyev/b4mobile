@@ -9,6 +9,37 @@ import {
   adminUploadImage,
 } from "../../lib/api";
 
+const SEGMENTS = [
+  { id: "flagman", label: "Flagman" },
+  { id: "mid", label: "O‘rta segment" },
+  { id: "budget", label: "Byudjet" },
+  { id: "gaming", label: "Gaming" },
+  { id: "camera", label: "Kamera" },
+  { id: "premium", label: "Premium" },
+];
+
+const RAM_OPTIONS = [4, 6, 8, 12, 16];
+const STORAGE_OPTIONS = [64, 128, 256, 512, 1024];
+
+const PRIMARY_USE_OPTIONS = [
+  { id: "kundalik", label: "Kundalik" },
+  { id: "gaming", label: "Gaming" },
+  { id: "kamera", label: "Kamera" },
+  { id: "ish", label: "Ish" },
+  { id: "oqish", label: "O‘qish" },
+  { id: "ijtimoiy", label: "Ijtimoiy tarmoqlar" },
+];
+
+const SCORE_FIELDS = [
+  { key: "cameraScore", label: "Kamera" },
+  { key: "performanceScore", label: "Performance" },
+  { key: "batteryScore", label: "Batareya" },
+  { key: "displayScore", label: "Ekran" },
+  { key: "gamingScore", label: "Gaming" },
+  { key: "chargingScore", label: "Tez zaryad" },
+  { key: "softwareScore", label: "Software support" },
+];
+
 const EMPTY_FORM = {
   id: null,
   name: "",
@@ -22,6 +53,22 @@ const EMPTY_FORM = {
   image: "",
   description: "",
   specs: [],
+  phoneFinderEnabled: false,
+  segment: "",
+  ramGb: "",
+  storageGb: "",
+  os: "",
+  primaryUses: [],
+  cameraScore: "",
+  performanceScore: "",
+  batteryScore: "",
+  displayScore: "",
+  gamingScore: "",
+  chargingScore: "",
+  softwareScore: "",
+  refreshRateHz: "",
+  batteryCapacityMah: "",
+  chipset: "",
 };
 
 function AdminProducts() {
@@ -61,6 +108,22 @@ function AdminProducts() {
       image: product.image || "",
       description: product.description || "",
       specs: product.specs || [],
+      phoneFinderEnabled: product.phoneFinderEnabled || false,
+      segment: product.segment || "",
+      ramGb: product.ramGb || "",
+      storageGb: product.storageGb || "",
+      os: product.os || "",
+      primaryUses: product.primaryUses || [],
+      cameraScore: product.cameraScore || "",
+      performanceScore: product.performanceScore || "",
+      batteryScore: product.batteryScore || "",
+      displayScore: product.displayScore || "",
+      gamingScore: product.gamingScore || "",
+      chargingScore: product.chargingScore || "",
+      softwareScore: product.softwareScore || "",
+      refreshRateHz: product.refreshRateHz || "",
+      batteryCapacityMah: product.batteryCapacityMah || "",
+      chipset: product.chipset || "",
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -115,6 +178,15 @@ function AdminProducts() {
     }));
   };
 
+  const togglePrimaryUse = (useId) => {
+    setForm((prev) => ({
+      ...prev,
+      primaryUses: prev.primaryUses.includes(useId)
+        ? prev.primaryUses.filter((u) => u !== useId)
+        : [...prev.primaryUses, useId],
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -138,6 +210,22 @@ function AdminProducts() {
       image: form.image || null,
       description: form.description.trim() || null,
       specs: form.specs.filter((s) => s.label.trim() && s.value.trim()),
+      phoneFinderEnabled: form.phoneFinderEnabled,
+      segment: form.segment || null,
+      ramGb: form.ramGb ? Number(form.ramGb) : null,
+      storageGb: form.storageGb ? Number(form.storageGb) : null,
+      os: form.os || null,
+      primaryUses: form.primaryUses,
+      cameraScore: form.cameraScore ? Number(form.cameraScore) : null,
+      performanceScore: form.performanceScore ? Number(form.performanceScore) : null,
+      batteryScore: form.batteryScore ? Number(form.batteryScore) : null,
+      displayScore: form.displayScore ? Number(form.displayScore) : null,
+      gamingScore: form.gamingScore ? Number(form.gamingScore) : null,
+      chargingScore: form.chargingScore ? Number(form.chargingScore) : null,
+      softwareScore: form.softwareScore ? Number(form.softwareScore) : null,
+      refreshRateHz: form.refreshRateHz ? Number(form.refreshRateHz) : null,
+      batteryCapacityMah: form.batteryCapacityMah ? Number(form.batteryCapacityMah) : null,
+      chipset: form.chipset.trim() || null,
     };
 
     try {
@@ -303,6 +391,148 @@ function AdminProducts() {
                 </button>
               </div>
             ))}
+          </div>
+
+          <div className="admin-phonefinder-editor">
+            <div className="admin-card-header">
+              <span>Telefon tanlash uchun parametrlar</span>
+              <button
+                type="button"
+                className={`admin-toggle ${form.phoneFinderEnabled ? "on" : ""}`}
+                onClick={() =>
+                  setForm((prev) => ({
+                    ...prev,
+                    phoneFinderEnabled: !prev.phoneFinderEnabled,
+                  }))
+                }
+              >
+                {form.phoneFinderEnabled ? "Enabled for Phone Finder" : "Enable for Phone Finder"}
+              </button>
+            </div>
+
+            {form.phoneFinderEnabled && (
+              <>
+                <div className="admin-form-row">
+                  <label>
+                    <span>Telefon turkumi</span>
+                    <select
+                      value={form.segment}
+                      onChange={(e) => setForm({ ...form, segment: e.target.value })}
+                    >
+                      <option value="">Tanlanmagan</option>
+                      {SEGMENTS.map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+
+                  <label>
+                    <span>RAM (GB)</span>
+                    <select
+                      value={form.ramGb}
+                      onChange={(e) => setForm({ ...form, ramGb: e.target.value })}
+                    >
+                      <option value="">Tanlanmagan</option>
+                      {RAM_OPTIONS.map((r) => (
+                        <option key={r} value={r}>
+                          {r} GB
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+
+                  <label>
+                    <span>Xotira (Storage)</span>
+                    <select
+                      value={form.storageGb}
+                      onChange={(e) => setForm({ ...form, storageGb: e.target.value })}
+                    >
+                      <option value="">Tanlanmagan</option>
+                      {STORAGE_OPTIONS.map((s) => (
+                        <option key={s} value={s}>
+                          {s >= 1024 ? "1 TB" : `${s} GB`}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
+
+                <div className="admin-form-row">
+                  <label>
+                    <span>Operatsion tizim</span>
+                    <select
+                      value={form.os}
+                      onChange={(e) => setForm({ ...form, os: e.target.value })}
+                    >
+                      <option value="">Tanlanmagan</option>
+                      <option value="android">Android</option>
+                      <option value="ios">iOS</option>
+                    </select>
+                  </label>
+
+                  <label>
+                    <span>Ekran yangilanish tezligi (Hz)</span>
+                    <input
+                      type="number"
+                      value={form.refreshRateHz}
+                      onChange={(e) => setForm({ ...form, refreshRateHz: e.target.value })}
+                    />
+                  </label>
+
+                  <label>
+                    <span>Batareya sig‘imi (mAh)</span>
+                    <input
+                      type="number"
+                      value={form.batteryCapacityMah}
+                      onChange={(e) => setForm({ ...form, batteryCapacityMah: e.target.value })}
+                    />
+                  </label>
+                </div>
+
+                <label className="admin-form-full">
+                  <span>Chipset</span>
+                  <input
+                    type="text"
+                    placeholder="Masalan: Snapdragon 8 Gen 3"
+                    value={form.chipset}
+                    onChange={(e) => setForm({ ...form, chipset: e.target.value })}
+                  />
+                </label>
+
+                <div className="admin-form-full">
+                  <span>Asosiy foydalanish</span>
+                  <div className="admin-checkbox-group">
+                    {PRIMARY_USE_OPTIONS.map((use) => (
+                      <label key={use.id} className="admin-checkbox-pill">
+                        <input
+                          type="checkbox"
+                          checked={form.primaryUses.includes(use.id)}
+                          onChange={() => togglePrimaryUse(use.id)}
+                        />
+                        <span>{use.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="admin-score-grid">
+                  {SCORE_FIELDS.map((field) => (
+                    <label key={field.key}>
+                      <span>{field.label} (1-5)</span>
+                      <input
+                        type="number"
+                        min="1"
+                        max="5"
+                        value={form[field.key]}
+                        onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
+                      />
+                    </label>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
 
           {error && <p className="admin-error">{error}</p>}

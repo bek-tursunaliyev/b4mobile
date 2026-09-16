@@ -10,32 +10,32 @@
     position: relative;
 
     width: 100%;
-    height: 160px;
+    height: 260px;
 
     overflow: hidden;
 
     border-radius: 14px;
     background: #f2f2f2;
   }
-  
+
   .promo-slide {
     position: absolute;
     inset: 0;
-  
+
     width: 100%;
     height: 100%;
-  
+
     display: flex;
     align-items: center;
-  
-    padding: 25px 50px;
-  
+
+    padding: 32px 56px;
+
     background-size: cover;
     background-position: center;
-  
+
     opacity: 0;
     visibility: hidden;
-  
+
     transition:
       opacity 0.5s ease,
       visibility 0.5s ease;
@@ -72,17 +72,17 @@
   
   .promo-content h2 {
     margin: 0;
-  
-    font-size: 24px;
-    line-height: 1.1;
+
+    font-size: 30px;
+    line-height: 1.15;
     font-weight: 700;
   }
-  
+
   .promo-content p {
-    margin-top: 7px;
-  
-    font-size: 9px;
-    color: rgba(255, 255, 255, 0.8);
+    margin-top: 9px;
+
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.85);
   }
   
   
@@ -174,43 +174,43 @@
   
   @media (max-width: 768px) {
     .promo-carousel {
-      height: 145px;
+      height: 210px;
       border-radius: 12px;
     }
-  
+
     .promo-slide {
-      padding: 20px 40px;
+      padding: 24px 40px;
     }
-  
+
     .promo-content h2 {
-      font-size: 19px;
+      font-size: 22px;
     }
-  
+
     .promo-content p {
-      font-size: 8px;
+      font-size: 11px;
     }
   }
-  
-  
+
+
   /* MOBILE */
-  
+
   @media (max-width: 480px) {
     .promo-carousel {
-      height: 110px;
+      height: 165px;
       border-radius: 10px;
     }
 
     .promo-slide {
-      padding: 15px 28px;
+      padding: 18px 28px;
     }
 
     .promo-content h2 {
-      font-size: 14px;
+      font-size: 18px;
     }
 
     .promo-content p {
-      margin-top: 5px;
-      font-size: 6px;
+      margin-top: 6px;
+      font-size: 9px;
     }
 
     .promo-arrow {

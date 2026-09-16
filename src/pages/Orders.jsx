@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, ArrowRight, ChevronDown, ChevronUp, Package } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 
 import { getMyOrders } from "../lib/api";
 import "./orders.css";
@@ -9,6 +10,7 @@ const STATUS_LABELS = {
   new: "Yangi",
   confirmed: "Tasdiqlangan",
   shipped: "Yo‘lda",
+  picked_up: "Berib yuborildi",
   done: "Bajarilgan",
   cancelled: "Bekor qilingan",
 };
@@ -119,6 +121,37 @@ function Orders() {
                       <div className="order-card-meta">
                         <span>{order.region}, {order.address}</span>
                         <span>{order.paymentMethod}</span>
+                      </div>
+
+                      {order.isInstallment && (
+                        <div className="order-installment-block">
+                          <strong>Bo‘lib to‘lash shartlari</strong>
+                          {order.installmentMonths && order.installmentMonthlyAmount ? (
+                            <>
+                              <span>
+                                Muddat: {order.installmentMonths} oy
+                              </span>
+                              <span>
+                                Oylik to‘lov:{" "}
+                                {order.installmentMonthlyAmount.toLocaleString("uz-UZ")} so‘m
+                              </span>
+                            </>
+                          ) : (
+                            <span>
+                              Admin hali shartlarni belgilamagan. Iltimos,
+                              kuting yoki administratorga murojaat qiling.
+                            </span>
+                          )}
+                          <small>
+                            Shartlarni o‘zgartirish uchun administratorga
+                            murojaat qiling.
+                          </small>
+                        </div>
+                      )}
+
+                      <div className="order-card-qr">
+                        <QRCodeSVG value={order.orderCode} size={120} />
+                        <span>Do‘konda ushbu QR kodni ko‘rsating</span>
                       </div>
                     </div>
                   )}

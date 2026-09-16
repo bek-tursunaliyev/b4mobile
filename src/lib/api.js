@@ -22,6 +22,22 @@ function mapProduct(row) {
     description: row.description,
     specs: row.specs || [],
     isActive: row.is_active,
+    phoneFinderEnabled: row.phone_finder_enabled || false,
+    segment: row.segment || "",
+    ramGb: row.ram_gb ?? "",
+    storageGb: row.storage_gb ?? "",
+    os: row.os || "",
+    primaryUses: row.primary_uses || [],
+    cameraScore: row.camera_score ?? "",
+    performanceScore: row.performance_score ?? "",
+    batteryScore: row.battery_score ?? "",
+    displayScore: row.display_score ?? "",
+    gamingScore: row.gaming_score ?? "",
+    chargingScore: row.charging_score ?? "",
+    softwareScore: row.software_score ?? "",
+    refreshRateHz: row.refresh_rate_hz ?? "",
+    batteryCapacityMah: row.battery_capacity_mah ?? "",
+    chipset: row.chipset || "",
   };
 }
 
@@ -54,6 +70,12 @@ function mapOrder(row) {
     telegramUsername: row.telegram_username,
     status: row.status,
     createdAt: row.created_at,
+    isInstallment: row.is_installment || false,
+    installmentMonths: row.installment_months ?? null,
+    installmentMonthlyAmount: row.installment_monthly_amount
+      ? Number(row.installment_monthly_amount)
+      : null,
+    pickedUpAt: row.picked_up_at || null,
   };
 }
 
@@ -104,6 +126,25 @@ export async function getProductById(id) {
 
   if (error) throw error;
   return data ? mapProduct(data) : null;
+}
+
+export async function getPhoneFinderQuestions() {
+  const res = await fetch(`${FUNCTIONS_URL}/phone-finder-questions`);
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error || "Savollarni yuklab bo'lmadi");
+  return json;
+}
+
+export async function getPhoneFinderRecommendations(answers) {
+  const res = await fetch(`${FUNCTIONS_URL}/phone-finder-recommend`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(answers),
+  });
+
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error || "Tavsiyalarni olib bo'lmadi");
+  return json.results || [];
 }
 
 export async function getBanners() {
@@ -212,9 +253,14 @@ export async function submitTradeIn(payload, file) {
 // ADMIN
 // ==================================================
 
-async function adminRequest(fn, { method = "GET", id, body } = {}) {
+async function adminRequest(fn, { method = "GET", id, params, body } = {}) {
   const url = new URL(`${FUNCTIONS_URL}/${fn}`);
   if (id !== undefined) url.searchParams.set("id", id);
+  if (params) {
+    for (const [key, value] of Object.entries(params)) {
+      if (value !== undefined) url.searchParams.set(key, value);
+    }
+  }
 
   const res = await fetch(url, {
     method,
@@ -303,6 +349,27 @@ export async function adminUpdateOrderStatus(id, status) {
     method: "PATCH",
     id,
     body: { status },
+  });
+  return mapOrder(order);
+}
+
+export async function adminGetOrderByCode(code) {
+  const { order } = await adminRequest("admin-orders", {
+    method: "GET",
+    params: { code },
+  });
+  return order ? mapOrder(order) : null;
+}
+
+export async function adminSetInstallmentTerms(id, months, monthlyAmount) {
+  const { order } = await adminRequest("admin-orders", {
+    method: "PATCH",
+    id,
+    body: {
+      isInstallment: true,
+      installmentMonths: months,
+      installmentMonthlyAmount: monthlyAmount,
+    },
   });
   return mapOrder(order);
 }

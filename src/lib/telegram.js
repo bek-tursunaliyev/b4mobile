@@ -36,3 +36,26 @@ export function hapticFeedback(style = "light") {
     // no-op if unsupported
   }
 }
+
+// Opens Telegram's native QR scanner and resolves with the scanned text,
+// or null if the popup isn't supported (e.g. running outside Telegram),
+// was cancelled, or the client's Telegram version is too old.
+export function scanQrCode(promptText = "QR kodni skanerlang") {
+  const webApp = getTelegramWebApp();
+
+  if (!webApp?.showScanQrPopup) {
+    return Promise.resolve(null);
+  }
+
+  return new Promise((resolve) => {
+    try {
+      webApp.showScanQrPopup({ text: promptText }, (text) => {
+        webApp.closeScanQrPopup();
+        resolve(text || null);
+        return true;
+      });
+    } catch {
+      resolve(null);
+    }
+  });
+}

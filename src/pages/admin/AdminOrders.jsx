@@ -1,12 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, QrCode, X } from "lucide-react";
 
-import { adminGetOrders, adminUpdateOrderStatus } from "../../lib/api";
+import {
+  adminGetOrderByCode,
+  adminGetOrders,
+  adminSetInstallmentTerms,
+  adminUpdateOrderStatus,
+} from "../../lib/api";
+import { scanQrCode } from "../../lib/telegram";
 
 const STATUS_OPTIONS = [
   { value: "new", label: "Yangi" },
   { value: "confirmed", label: "Tasdiqlangan" },
   { value: "shipped", label: "Yo‘lda" },
+  { value: "picked_up", label: "Berib yuborildi" },
   { value: "done", label: "Bajarilgan" },
   { value: "cancelled", label: "Bekor qilingan" },
 ];
@@ -15,6 +22,10 @@ function AdminOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState(null);
+  const [installmentDrafts, setInstallmentDrafts] = useState({});
+  const [scanning, setScanning] = useState(false);
+  const [scanError, setScanError] = useState("");
+  const [scannedOrder, setScannedOrder] = useState(null);
 
   const load = () => {
     setLoading(true);
@@ -28,11 +39,120 @@ function AdminOrders() {
   const handleStatusChange = async (order, status) => {
     const updated = await adminUpdateOrderStatus(order.id, status);
     setOrders((prev) => prev.map((o) => (o.id === order.id ? updated : o)));
+    if (scannedOrder?.id === order.id) setScannedOrder(updated);
+  };
+
+  const draftFor = (order) =>
+    installmentDrafts[order.id] || {
+      months: order.installmentMonths || "",
+      amount: order.installmentMonthlyAmount || "",
+    };
+
+  const updateDraft = (order, field, value) => {
+    setInstallmentDrafts((prev) => ({
+      ...prev,
+      [order.id]: { ...draftFor(order), [field]: value },
+    }));
+  };
+
+  const saveInstallment = async (order) => {
+    const draft = draftFor(order);
+    if (!draft.months || !draft.amount) return;
+
+    const updated = await adminSetInstallmentTerms(
+      order.id,
+      Number(draft.months),
+      Number(draft.amount)
+    );
+    setOrders((prev) => prev.map((o) => (o.id === order.id ? updated : o)));
+  };
+
+  const handleScan = async () => {
+    setScanError("");
+    setScanning(true);
+
+    try {
+      const code = await scanQrCode("Buyurtma QR kodini skaner qiling");
+
+      if (!code) {
+        setScanError(
+          "QR skaner mavjud emas — bu funksiya faqat Telegram ilovasi ichida ishlaydi."
+        );
+        return;
+      }
+
+      const order = await adminGetOrderByCode(code.trim());
+      setScannedOrder(order);
+    } catch (err) {
+      setScanError(err.message || "Buyurtma topilmadi");
+    } finally {
+      setScanning(false);
+    }
   };
 
   return (
     <div>
-      <h1 className="admin-page-title">Buyurtmalar</h1>
+      <div className="admin-card-header">
+        <h1 className="admin-page-title" style={{ marginBottom: 0 }}>
+          Buyurtmalar
+        </h1>
+
+        <button type="button" className="admin-submit" onClick={handleScan} disabled={scanning}>
+          <QrCode size={16} style={{ marginRight: 6, verticalAlign: "-3px" }} />
+          {scanning ? "Skanerlanmoqda..." : "QR skanerlash"}
+        </button>
+      </div>
+
+      {scanError && <p className="admin-error">{scanError}</p>}
+
+      {scannedOrder && (
+        <div className="admin-card admin-scan-result">
+          <div className="admin-card-header">
+            <h2>Skanerlangan buyurtma: {scannedOrder.orderCode}</h2>
+            <button type="button" className="admin-link-btn" onClick={() => setScannedOrder(null)}>
+              <X size={15} />
+              Yopish
+            </button>
+          </div>
+
+          <p>
+            <strong>Mijoz:</strong> {scannedOrder.fullName} · {scannedOrder.phone}
+          </p>
+          <p>
+            <strong>Manzil:</strong> {scannedOrder.region}, {scannedOrder.address}
+          </p>
+          <p>
+            <strong>Jami:</strong> {scannedOrder.total.toLocaleString("uz-UZ")} so‘m
+          </p>
+          <p>
+            <strong>Holat:</strong>{" "}
+            {STATUS_OPTIONS.find((s) => s.value === scannedOrder.status)?.label ||
+              scannedOrder.status}
+          </p>
+
+          <div className="admin-order-products">
+            {scannedOrder.items.map((item, index) => (
+              <div className="admin-order-product-row" key={index}>
+                <span>{item.name}</span>
+                <span>x{item.quantity}</span>
+                <strong>
+                  {(item.price * item.quantity).toLocaleString("uz-UZ")} so‘m
+                </strong>
+              </div>
+            ))}
+          </div>
+
+          {scannedOrder.status !== "picked_up" && (
+            <button
+              type="button"
+              className="admin-submit"
+              onClick={() => handleStatusChange(scannedOrder, "picked_up")}
+            >
+              Mijozga berildi
+            </button>
+          )}
+        </div>
+      )}
 
       <div className="admin-card">
         {loading ? (
@@ -43,6 +163,7 @@ function AdminOrders() {
           <div className="admin-order-list">
             {orders.map((order) => {
               const expanded = expandedId === order.id;
+              const draft = draftFor(order);
 
               return (
                 <div className="admin-order-item" key={order.id}>
@@ -105,6 +226,29 @@ function AdminOrders() {
                           ))}
                         </select>
                       </label>
+
+                      {order.isInstallment && (
+                        <div className="admin-installment-editor">
+                          <span>Bo‘lib to‘lash shartlari</span>
+                          <div className="admin-installment-inputs">
+                            <input
+                              type="number"
+                              placeholder="Necha oy"
+                              value={draft.months}
+                              onChange={(e) => updateDraft(order, "months", e.target.value)}
+                            />
+                            <input
+                              type="number"
+                              placeholder="Oylik summa"
+                              value={draft.amount}
+                              onChange={(e) => updateDraft(order, "amount", e.target.value)}
+                            />
+                            <button type="button" onClick={() => saveInstallment(order)}>
+                              Saqlash
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

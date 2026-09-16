@@ -3,14 +3,14 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
   ArrowRight,
+  Calendar,
   Check,
-  CreditCard,
-  Landmark,
   ShieldCheck,
   ShoppingBag,
   Truck,
   Wallet,
 } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 
 import { useCart } from "../hooks/useCart";
 import { createOrder } from "../lib/api";
@@ -18,8 +18,7 @@ import "./checkout.css";
 
 const PAYMENT_METHODS = [
   { id: "cash", label: "Naqd pul", icon: Wallet },
-  { id: "card", label: "Bank kartasi", icon: CreditCard },
-  { id: "click", label: "Click / Payme", icon: Landmark },
+  { id: "installment", label: "Bo‘lib to‘lash (naqd)", icon: Calendar },
 ];
 
 function Checkout() {
@@ -104,12 +103,14 @@ function Checkout() {
         subtotal: cartTotal,
         deliveryPrice,
         total: totalPrice,
+        isInstallment: payment === "installment",
       });
 
       setOrder({
         id: result.orderCode,
         phone: form.phone,
         total: totalPrice,
+        isInstallment: payment === "installment",
       });
       clearCart();
     } catch (err) {
@@ -137,6 +138,20 @@ function Checkout() {
               operatorimiz siz bilan <strong>{order.phone}</strong> raqami
               orqali bog‘lanadi.
             </p>
+
+            <div className="order-success-qr">
+              <QRCodeSVG value={order.id} size={160} />
+              <span className="order-success-code">{order.id}</span>
+              <p>Mahsulotni do‘kondan olib ketishda shu QR kodni ko‘rsating.</p>
+            </div>
+
+            {order.isInstallment && (
+              <p className="order-installment-note">
+                Bo‘lib to‘lash so‘rovingiz qabul qilindi — muddat va oylik
+                to‘lov summasini administrator tez orada siz bilan
+                bog‘lanib belgilaydi. Buyurtmalar bo‘limida ko‘rishingiz mumkin.
+              </p>
+            )}
 
             <div className="order-success-total">
               <span>To‘lov summasi</span>
