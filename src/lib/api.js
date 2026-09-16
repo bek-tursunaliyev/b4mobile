@@ -26,6 +26,10 @@ function mapProduct(row) {
     segment: row.segment || "",
     ramGb: row.ram_gb ?? "",
     storageGb: row.storage_gb ?? "",
+    screen: row.screen || "",
+    camera: row.camera || "",
+    battery: row.battery || "",
+    ipRating: row.ip_rating || "",
     os: row.os || "",
     primaryUses: row.primary_uses || [],
     cameraScore: row.camera_score ?? "",
@@ -50,7 +54,8 @@ function mapProduct(row) {
 // only for the admin's own profit tracking and must never reach customers).
 const PUBLIC_PRODUCT_COLUMNS =
   "id, name, brand, category, price, old_price, stock, rating, reviews, image, " +
-  "description, specs, is_active, phone_finder_enabled, segment, ram_gb, storage_gb, os, " +
+  "description, specs, is_active, phone_finder_enabled, segment, ram_gb, storage_gb, " +
+  "screen, camera, battery, ip_rating, os, " +
   "primary_uses, camera_score, performance_score, battery_score, display_score, gaming_score, " +
   "charging_score, software_score, refresh_rate_hz, battery_capacity_mah, chipset, " +
   "delivery_available, delivery_price, warranty, currency, created_at";

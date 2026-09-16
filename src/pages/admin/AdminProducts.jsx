@@ -10,15 +10,6 @@ import {
 } from "../../lib/api";
 import { CURRENCIES, formatMoney } from "../../lib/currency";
 
-const SEGMENTS = [
-  { id: "flagman", label: "Flagman" },
-  { id: "mid", label: "O‘rta segment" },
-  { id: "budget", label: "Byudjet" },
-  { id: "gaming", label: "Gaming" },
-  { id: "camera", label: "Kamera" },
-  { id: "premium", label: "Premium" },
-];
-
 const RAM_OPTIONS = [4, 6, 8, 12, 16];
 const STORAGE_OPTIONS = [64, 128, 256, 512, 1024];
 
@@ -57,10 +48,13 @@ const EMPTY_FORM = {
   deliveryAvailable: true,
   deliveryPrice: "",
   warranty: "",
-  phoneFinderEnabled: false,
-  segment: "",
   ramGb: "",
   storageGb: "",
+  screen: "",
+  camera: "",
+  battery: "",
+  ipRating: "",
+  phoneFinderEnabled: false,
   os: "",
   primaryUses: [],
   cameraScore: "",
@@ -120,10 +114,13 @@ function AdminProducts() {
       deliveryAvailable: product.deliveryAvailable ?? true,
       deliveryPrice: product.deliveryPrice ?? "",
       warranty: product.warranty || "",
-      phoneFinderEnabled: product.phoneFinderEnabled || false,
-      segment: product.segment || "",
       ramGb: product.ramGb || "",
       storageGb: product.storageGb || "",
+      screen: product.screen || "",
+      camera: product.camera || "",
+      battery: product.battery || "",
+      ipRating: product.ipRating || "",
+      phoneFinderEnabled: product.phoneFinderEnabled || false,
       os: product.os || "",
       primaryUses: product.primaryUses || [],
       cameraScore: product.cameraScore || "",
@@ -229,10 +226,13 @@ function AdminProducts() {
           : Number(form.deliveryPrice)
         : null,
       warranty: form.warranty.trim() || null,
-      phoneFinderEnabled: form.phoneFinderEnabled,
-      segment: form.segment || null,
       ramGb: form.ramGb ? Number(form.ramGb) : null,
       storageGb: form.storageGb ? Number(form.storageGb) : null,
+      screen: form.screen.trim() || null,
+      camera: form.camera.trim() || null,
+      battery: form.battery.trim() || null,
+      ipRating: form.ipRating.trim() || null,
+      phoneFinderEnabled: form.phoneFinderEnabled,
       os: form.os || null,
       primaryUses: form.primaryUses,
       cameraScore: form.cameraScore ? Number(form.cameraScore) : null,
@@ -397,9 +397,91 @@ function AdminProducts() {
             />
           </label>
 
+          <div className="admin-corespecs-editor">
+            <div className="admin-card-header">
+              <span>Asosiy xususiyatlar</span>
+            </div>
+
+            <div className="admin-form-row">
+              <label>
+                <span>RAM (GB)</span>
+                <select
+                  value={form.ramGb}
+                  onChange={(e) => setForm({ ...form, ramGb: e.target.value })}
+                >
+                  <option value="">Tanlanmagan</option>
+                  {RAM_OPTIONS.map((r) => (
+                    <option key={r} value={r}>
+                      {r} GB
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label>
+                <span>Doimiy xotira (Storage)</span>
+                <select
+                  value={form.storageGb}
+                  onChange={(e) => setForm({ ...form, storageGb: e.target.value })}
+                >
+                  <option value="">Tanlanmagan</option>
+                  {STORAGE_OPTIONS.map((s) => (
+                    <option key={s} value={s}>
+                      {s >= 1024 ? "1 TB" : `${s} GB`}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+
+            <div className="admin-form-row">
+              <label>
+                <span>Ekran</span>
+                <input
+                  type="text"
+                  placeholder="Masalan: 6.7” AMOLED, 120Hz (bo‘sh qoldirsangiz “-” ko‘rsatiladi)"
+                  value={form.screen}
+                  onChange={(e) => setForm({ ...form, screen: e.target.value })}
+                />
+              </label>
+
+              <label>
+                <span>Kamera</span>
+                <input
+                  type="text"
+                  placeholder="Masalan: 50 MP + 12 MP + 5 MP"
+                  value={form.camera}
+                  onChange={(e) => setForm({ ...form, camera: e.target.value })}
+                />
+              </label>
+            </div>
+
+            <div className="admin-form-row">
+              <label>
+                <span>Batareya</span>
+                <input
+                  type="text"
+                  placeholder="Masalan: 5000 mAh"
+                  value={form.battery}
+                  onChange={(e) => setForm({ ...form, battery: e.target.value })}
+                />
+              </label>
+
+              <label>
+                <span>Himoya darajasi (IP rating)</span>
+                <input
+                  type="text"
+                  placeholder="Masalan: IP68"
+                  value={form.ipRating}
+                  onChange={(e) => setForm({ ...form, ipRating: e.target.value })}
+                />
+              </label>
+            </div>
+          </div>
+
           <div className="admin-specs-editor">
             <div className="admin-card-header">
-              <span>Xususiyatlari</span>
+              <span>Qo‘shimcha xususiyatlar</span>
               <button type="button" className="admin-link-btn" onClick={addSpec}>
                 <Plus size={15} />
                 Qo‘shish
@@ -496,53 +578,6 @@ function AdminProducts() {
 
             {form.phoneFinderEnabled && (
               <>
-                <div className="admin-form-row">
-                  <label>
-                    <span>Telefon turkumi</span>
-                    <select
-                      value={form.segment}
-                      onChange={(e) => setForm({ ...form, segment: e.target.value })}
-                    >
-                      <option value="">Tanlanmagan</option>
-                      {SEGMENTS.map((s) => (
-                        <option key={s.id} value={s.id}>
-                          {s.label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-
-                  <label>
-                    <span>RAM (GB)</span>
-                    <select
-                      value={form.ramGb}
-                      onChange={(e) => setForm({ ...form, ramGb: e.target.value })}
-                    >
-                      <option value="">Tanlanmagan</option>
-                      {RAM_OPTIONS.map((r) => (
-                        <option key={r} value={r}>
-                          {r} GB
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-
-                  <label>
-                    <span>Xotira (Storage)</span>
-                    <select
-                      value={form.storageGb}
-                      onChange={(e) => setForm({ ...form, storageGb: e.target.value })}
-                    >
-                      <option value="">Tanlanmagan</option>
-                      {STORAGE_OPTIONS.map((s) => (
-                        <option key={s} value={s}>
-                          {s >= 1024 ? "1 TB" : `${s} GB`}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                </div>
-
                 <div className="admin-form-row">
                   <label>
                     <span>Operatsion tizim</span>

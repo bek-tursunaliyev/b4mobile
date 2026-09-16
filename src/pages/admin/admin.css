@@ -624,6 +624,19 @@
 }
 
 /* ==================================================
+   CORE SPECS (RAM, storage, screen, camera, battery, IP rating)
+================================================== */
+
+.admin-corespecs-editor {
+  padding-top: 6px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.admin-corespecs-editor .admin-form-row {
+  margin-top: 14px;
+}
+
+/* ==================================================
    SPECS EDITOR
 ================================================== */
 
