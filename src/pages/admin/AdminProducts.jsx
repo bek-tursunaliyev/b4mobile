@@ -48,11 +48,12 @@ const EMPTY_FORM = {
   price: "",
   oldPrice: "",
   stock: "",
-  rating: "",
-  reviews: "",
   image: "",
   description: "",
   specs: [],
+  deliveryAvailable: true,
+  deliveryPrice: "",
+  warranty: "",
   phoneFinderEnabled: false,
   segment: "",
   ramGb: "",
@@ -78,6 +79,11 @@ function AdminProducts() {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
+  const [idSearch, setIdSearch] = useState("");
+
+  const visibleProducts = idSearch.trim()
+    ? products.filter((p) => String(p.id) === idSearch.trim())
+    : products;
 
   const load = () => {
     setLoading(true);
@@ -103,11 +109,12 @@ function AdminProducts() {
       price: product.price,
       oldPrice: product.oldPrice || "",
       stock: product.stock,
-      rating: product.rating || "",
-      reviews: product.reviews || "",
       image: product.image || "",
       description: product.description || "",
       specs: product.specs || [],
+      deliveryAvailable: product.deliveryAvailable ?? true,
+      deliveryPrice: product.deliveryPrice ?? "",
+      warranty: product.warranty || "",
       phoneFinderEnabled: product.phoneFinderEnabled || false,
       segment: product.segment || "",
       ramGb: product.ramGb || "",
@@ -205,11 +212,16 @@ function AdminProducts() {
       price: Number(form.price),
       oldPrice: form.oldPrice ? Number(form.oldPrice) : null,
       stock: form.stock ? Number(form.stock) : 0,
-      rating: form.rating ? Number(form.rating) : 0,
-      reviews: form.reviews ? Number(form.reviews) : 0,
       image: form.image || null,
       description: form.description.trim() || null,
       specs: form.specs.filter((s) => s.label.trim() && s.value.trim()),
+      deliveryAvailable: form.deliveryAvailable,
+      deliveryPrice: form.deliveryAvailable
+        ? form.deliveryPrice === ""
+          ? 0
+          : Number(form.deliveryPrice)
+        : null,
+      warranty: form.warranty.trim() || null,
       phoneFinderEnabled: form.phoneFinderEnabled,
       segment: form.segment || null,
       ramGb: form.ramGb ? Number(form.ramGb) : null,
@@ -318,37 +330,14 @@ function AdminProducts() {
             </label>
           </div>
 
-          <div className="admin-form-row">
-            <label>
-              <span>Reyting (0–5)</span>
-              <input
-                type="number"
-                step="0.1"
-                min="0"
-                max="5"
-                value={form.rating}
-                onChange={(e) => setForm({ ...form, rating: e.target.value })}
-              />
-            </label>
-
-            <label>
-              <span>Sharhlar soni</span>
-              <input
-                type="number"
-                value={form.reviews}
-                onChange={(e) => setForm({ ...form, reviews: e.target.value })}
-              />
-            </label>
-
-            <label>
-              <span>Rasm</span>
-              <div className="admin-file-input">
-                <input type="file" accept="image/*" onChange={handleImageChange} />
-                <Upload size={15} />
-                {uploading ? "Yuklanmoqda..." : "Rasm tanlang"}
-              </div>
-            </label>
-          </div>
+          <label>
+            <span>Rasm</span>
+            <div className="admin-file-input">
+              <input type="file" accept="image/*" onChange={handleImageChange} />
+              <Upload size={15} />
+              {uploading ? "Yuklanmoqda..." : "Rasm tanlang"}
+            </div>
+          </label>
 
           {form.image && (
             <img src={form.image} alt="Preview" className="admin-image-preview" />
@@ -391,6 +380,56 @@ function AdminProducts() {
                 </button>
               </div>
             ))}
+          </div>
+
+          <div className="admin-delivery-editor">
+            <div className="admin-card-header">
+              <span>Yetkazib berish va kafolat</span>
+              <button
+                type="button"
+                className={`admin-toggle ${form.deliveryAvailable ? "on" : ""}`}
+                onClick={() =>
+                  setForm((prev) => ({
+                    ...prev,
+                    deliveryAvailable: !prev.deliveryAvailable,
+                  }))
+                }
+              >
+                {form.deliveryAvailable ? "Yetkazib berish bor" : "Yetkazib berish yo‘q"}
+              </button>
+            </div>
+
+            {form.deliveryAvailable && (
+              <div className="admin-delivery-row">
+                <input
+                  type="number"
+                  placeholder="Yetkazib berish narxi"
+                  value={form.deliveryPrice}
+                  disabled={form.deliveryPrice === 0}
+                  onChange={(e) => setForm({ ...form, deliveryPrice: e.target.value })}
+                />
+                <label className="admin-delivery-free">
+                  <input
+                    type="checkbox"
+                    checked={form.deliveryPrice === 0}
+                    onChange={(e) =>
+                      setForm({ ...form, deliveryPrice: e.target.checked ? 0 : "" })
+                    }
+                  />
+                  <span>Bepul</span>
+                </label>
+              </div>
+            )}
+
+            <label className="admin-form-full" style={{ marginTop: 14 }}>
+              <span>Kafolat</span>
+              <input
+                type="text"
+                placeholder="Masalan: 12 oy (bo‘sh qoldirsangiz ko‘rsatilmaydi)"
+                value={form.warranty}
+                onChange={(e) => setForm({ ...form, warranty: e.target.value })}
+              />
+            </label>
           </div>
 
           <div className="admin-phonefinder-editor">
@@ -546,15 +585,27 @@ function AdminProducts() {
       <div className="admin-card">
         <h2>Barcha mahsulotlar ({products.length})</h2>
 
+        <div className="admin-search-row">
+          <input
+            type="text"
+            placeholder="ID orqali qidirish..."
+            value={idSearch}
+            onChange={(e) => setIdSearch(e.target.value)}
+          />
+        </div>
+
         {loading ? (
           <p className="admin-loading">Yuklanmoqda...</p>
-        ) : products.length === 0 ? (
-          <p className="admin-empty">Hozircha mahsulot yo‘q.</p>
+        ) : visibleProducts.length === 0 ? (
+          <p className="admin-empty">
+            {idSearch.trim() ? "Bu ID bo‘yicha mahsulot topilmadi." : "Hozircha mahsulot yo‘q."}
+          </p>
         ) : (
           <div className="admin-table-wrap">
             <table className="admin-table">
               <thead>
                 <tr>
+                  <th>ID</th>
                   <th></th>
                   <th>Nomi</th>
                   <th>Kategoriya</th>
@@ -565,8 +616,9 @@ function AdminProducts() {
                 </tr>
               </thead>
               <tbody>
-                {products.map((product) => (
+                {visibleProducts.map((product) => (
                   <tr key={product.id}>
+                    <td>{product.id}</td>
                     <td>
                       {product.image && (
                         <img src={product.image} alt="" className="admin-row-thumb" />

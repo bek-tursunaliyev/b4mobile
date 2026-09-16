@@ -213,6 +213,12 @@
   font-size: 10.5px;
 }
 
+.profile-tradein-rejected {
+  color: #d33a3a !important;
+  font-size: 12px !important;
+  font-weight: 700;
+}
+
 /* ==================================================
    GUEST STATE
 ================================================== */

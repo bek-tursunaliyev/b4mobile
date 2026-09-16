@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Package, ShoppingBag, TrendingUp, Image as ImageIcon } from "lucide-react";
+import {
+  Package,
+  ShoppingBag,
+  TrendingUp,
+  Image as ImageIcon,
+  FileBarChart,
+} from "lucide-react";
 
 import { adminGetOrders, adminGetProducts } from "../../lib/api";
 
@@ -48,6 +54,12 @@ function AdminDashboard() {
       label: "Bannerlar",
       value: "Boshqarish",
       to: "/admin/banners",
+    },
+    {
+      icon: FileBarChart,
+      label: "Hisobot",
+      value: "Ko‘rish",
+      to: "/admin/reports",
     },
   ];
 

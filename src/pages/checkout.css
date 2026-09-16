@@ -216,6 +216,27 @@
   color: #fff;
 }
 
+.payment-option.disabled,
+.payment-option:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.payment-option.disabled:hover {
+  border-color: #e3e3e3;
+}
+
+.payment-option small {
+  color: #999;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.payment-option.active small {
+  color: rgba(255, 255, 255, 0.6);
+}
+
 /* ==================================================
    SUMMARY
 ================================================== */

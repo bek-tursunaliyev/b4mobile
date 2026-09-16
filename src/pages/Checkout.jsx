@@ -305,6 +305,7 @@ function Checkout() {
               <div className="payment-options">
                 {PAYMENT_METHODS.map((method) => {
                   const Icon = method.icon;
+                  const disabled = method.id === "installment";
 
                   return (
                     <button
@@ -312,11 +313,13 @@ function Checkout() {
                       key={method.id}
                       className={`payment-option ${
                         payment === method.id ? "active" : ""
-                      }`}
-                      onClick={() => setPayment(method.id)}
+                      } ${disabled ? "disabled" : ""}`}
+                      onClick={() => !disabled && setPayment(method.id)}
+                      disabled={disabled}
                     >
                       <Icon size={19} />
                       <span>{method.label}</span>
+                      {disabled && <small>Tez orada</small>}
                     </button>
                   );
                 })}

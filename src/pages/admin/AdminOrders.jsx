@@ -92,7 +92,7 @@ function AdminOrders() {
 
   return (
     <div>
-      <div className="admin-card-header">
+      <div className="admin-orders-toolbar">
         <h1 className="admin-page-title" style={{ marginBottom: 0 }}>
           Buyurtmalar
         </h1>

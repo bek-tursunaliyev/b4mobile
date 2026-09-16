@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Search, Star, X } from "lucide-react";
+import { ArrowLeft, Search, X } from "lucide-react";
 
 import { getProducts } from "../lib/api";
 import "./compare.css";
@@ -75,12 +75,6 @@ function Compare() {
         display: (p) => `${p.price.toLocaleString("uz-UZ")} so‘m`,
       },
       {
-        label: "Reyting",
-        invert: false,
-        value: (p) => p.rating,
-        display: (p) => `${p.rating} ⭐ (${p.reviews})`,
-      },
-      {
         label: "Omborda",
         invert: false,
         value: (p) => p.stock,
@@ -124,7 +118,7 @@ function Compare() {
 
         <h1 className="compare-title">Telefonlarni taqqoslash</h1>
         <p className="compare-subtitle">
-          2 yoki 3 ta mahsulot tanlang — eng yaxshi ko‘rsatkich{" "}
+          2 yoki 3 mahsulot tanlang — eng yaxshi ko‘rsatkich{" "}
           <span className="compare-legend-good">yashil</span>, eng past ko‘rsatkich{" "}
           <span className="compare-legend-bad">qizil</span> rangda belgilanadi.
         </p>
@@ -203,14 +197,7 @@ function Compare() {
                           key={p.id}
                           className={`compare-cell ${classes[p.id] || ""}`}
                         >
-                          {row.label === "Reyting" ? (
-                            <span className="compare-rating">
-                              <Star size={13} fill="currentColor" />
-                              {row.display(p)}
-                            </span>
-                          ) : (
-                            row.display(p)
-                          )}
+                          {row.display(p)}
                         </td>
                       ))}
                     </tr>

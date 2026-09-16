@@ -14,17 +14,18 @@ import {
 import { getPhoneFinderQuestions, getPhoneFinderRecommendations } from "../lib/api";
 import "./phonefinder.css";
 
-const STEP_KEYS = ["budgetId", "purpose", "os", "ram", "storage", "priority", "brand"];
+const STEP_KEYS = ["budgetId", "purpose", "ram", "storage", "priority", "brand"];
 
 const STEP_TITLES = [
   "Telefon uchun qancha budjet ajratgansiz?",
   "Telefondan asosan nima uchun foydalanasiz?",
-  "Qaysi operatsion tizimni xohlaysiz?",
   "RAM qancha bo‘lishini xohlaysiz?",
   "Xotira qancha bo‘lishi kerak?",
   "Telefonning qaysi xususiyati siz uchun eng muhim?",
   "Qaysi brendlarni xohlaysiz?",
 ];
+
+const TOTAL_STEPS = STEP_KEYS.length;
 
 function PhoneFinder() {
   const navigate = useNavigate();
@@ -56,14 +57,12 @@ function PhoneFinder() {
       case 2:
         return questions.purposes;
       case 3:
-        return questions.os;
-      case 4:
         return questions.ram;
-      case 5:
+      case 4:
         return questions.storage;
-      case 6:
+      case 5:
         return questions.priorities;
-      case 7:
+      case 6:
         return questions.brands;
       default:
         return [];
@@ -75,7 +74,7 @@ function PhoneFinder() {
     const nextAnswers = { ...answers, [key]: optionId };
     setAnswers(nextAnswers);
 
-    if (step < 7) {
+    if (step < TOTAL_STEPS) {
       setStep(step + 1);
       return;
     }
@@ -86,7 +85,7 @@ function PhoneFinder() {
     try {
       const data = await getPhoneFinderRecommendations(nextAnswers);
       setResults(data);
-      setStep(8);
+      setStep(TOTAL_STEPS + 1);
     } catch (err) {
       setResultError(err.message || "Tavsiyalarni olib bo‘lmadi");
     } finally {
@@ -102,7 +101,7 @@ function PhoneFinder() {
   };
 
   const goBack = () => {
-    if (step > 1 && step <= 7) setStep(step - 1);
+    if (step > 1 && step <= TOTAL_STEPS) setStep(step - 1);
   };
 
   if (loadingQuestions) {
@@ -139,16 +138,16 @@ function PhoneFinder() {
           moslik foizi bilan tanlab beradi.
         </p>
 
-        {step <= 7 && (
+        {step <= TOTAL_STEPS && (
           <>
             <div className="finder-steps">
-              {Array.from({ length: 7 }, (_, i) => (
+              {Array.from({ length: TOTAL_STEPS }, (_, i) => (
                 <div key={i} className={`finder-step-dot ${step >= i + 1 ? "active" : ""}`} />
               ))}
             </div>
 
             <div className="finder-card">
-              <span className="finder-step-label">{step}-savol / 7</span>
+              <span className="finder-step-label">{step}-savol / {TOTAL_STEPS}</span>
               <h2>{STEP_TITLES[step - 1]}</h2>
 
               <div className="finder-options">
@@ -180,7 +179,7 @@ function PhoneFinder() {
           </>
         )}
 
-        {step === 8 && (
+        {step === TOTAL_STEPS + 1 && (
           <div className="finder-results">
             <div className="finder-results-header">
               <span>Siz uchun topilgan telefonlar ({results?.length || 0})</span>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Check } from "lucide-react";
 
 import { adminGetTradeIns, adminUpdateTradeIn } from "../../lib/api";
 
@@ -12,6 +13,7 @@ function AdminTradeIns() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [priceDrafts, setPriceDrafts] = useState({});
+  const [editingIds, setEditingIds] = useState({});
 
   const load = () => {
     setLoading(true);
@@ -41,6 +43,13 @@ function AdminTradeIns() {
       status: "priced",
     });
     setRequests((prev) => prev.map((r) => (r.id === req.id ? updated : r)));
+    setEditingIds((prev) => ({ ...prev, [req.id]: false }));
+  };
+
+  const isEditingPrice = (req) => req.status !== "priced" || editingIds[req.id];
+
+  const startEditPrice = (req) => {
+    setEditingIds((prev) => ({ ...prev, [req.id]: true }));
   };
 
   return (
@@ -93,19 +102,31 @@ function AdminTradeIns() {
                     ))}
                   </select>
 
-                  <div className="admin-tradein-price">
-                    <input
-                      type="number"
-                      placeholder="Narx"
-                      value={priceDrafts[req.id] ?? ""}
-                      onChange={(e) =>
-                        setPriceDrafts((prev) => ({ ...prev, [req.id]: e.target.value }))
-                      }
-                    />
-                    <button type="button" onClick={() => handlePriceSubmit(req)}>
-                      Belgilash
-                    </button>
-                  </div>
+                  {isEditingPrice(req) ? (
+                    <div className="admin-tradein-price">
+                      <input
+                        type="number"
+                        placeholder="Narx"
+                        value={priceDrafts[req.id] ?? ""}
+                        onChange={(e) =>
+                          setPriceDrafts((prev) => ({ ...prev, [req.id]: e.target.value }))
+                        }
+                      />
+                      <button type="button" onClick={() => handlePriceSubmit(req)}>
+                        Belgilash
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="admin-tradein-priced">
+                      <span className="admin-tradein-priced-tick">
+                        <Check size={14} />
+                        {Number(req.offeredPrice).toLocaleString("uz-UZ")} so‘m
+                      </span>
+                      <button type="button" onClick={() => startEditPrice(req)}>
+                        Narxni o‘zgartirish
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

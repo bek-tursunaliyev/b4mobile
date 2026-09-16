@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Check, ShoppingCart, Star } from "lucide-react";
+import { Check, ShoppingCart } from "lucide-react";
 
 import { getProducts } from "../lib/api";
 import { useCart } from "../hooks/useCart";
@@ -55,14 +55,6 @@ function FeaturedProducts() {
                 </span>
 
                 <h3>{product.name}</h3>
-
-                <div className="product-rating">
-                  <Star size={16} fill="currentColor" />
-                  <span>{product.rating}</span>
-                  <span className="reviews">
-                    ({product.reviews})
-                  </span>
-                </div>
 
                 <div className="product-bottom">
                   <div>

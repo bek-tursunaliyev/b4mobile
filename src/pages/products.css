@@ -516,6 +516,11 @@
   color: #999;
 }
 
+.feature-strike {
+  text-decoration: line-through;
+  color: #c33 !important;
+}
+
 
 /* ==================================================
    QUANTITY

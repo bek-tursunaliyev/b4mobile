@@ -6,7 +6,6 @@ import MainLayout from "./layouts/MainLayouts";
 import Home from "./pages/Home";
 import Catalog from "./pages/Catalog";
 import Compare from "./pages/Compare";
-import Installment from "./pages/Installement";
 import MyPhone from "./pages/MyPhone";
 import PhoneFinder from "./pages/PhoneFinder";
 import Cart from "./pages/Cart";
@@ -25,6 +24,7 @@ import AdminProducts from "./pages/admin/AdminProducts";
 import AdminBanners from "./pages/admin/AdminBanners";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminTradeIns from "./pages/admin/AdminTradeIns";
+import AdminReports from "./pages/admin/AdminReports";
 
 const router = createBrowserRouter([
   {
@@ -51,11 +51,6 @@ const router = createBrowserRouter([
       {
         path: "compare",
         element: <Compare />,
-      },
-
-      {
-        path: "installment",
-        element: <Installment />,
       },
 
       {
@@ -128,6 +123,10 @@ const router = createBrowserRouter([
       {
         path: "trade-ins",
         element: <AdminTradeIns />,
+      },
+      {
+        path: "reports",
+        element: <AdminReports />,
       },
     ],
   },

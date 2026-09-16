@@ -2,20 +2,21 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowRight,
-  CreditCard,
   Package,
+  ShoppingBag,
   Smartphone,
   User,
   Wrench,
 } from "lucide-react";
 
-import { getMyOrders } from "../lib/api";
+import { getMyOrders, getMyTradeIns } from "../lib/api";
 import "./profile.css";
 
 function Profile() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [orders, setOrders] = useState([]);
+  const [tradeIns, setTradeIns] = useState([]);
 
   useEffect(() => {
     getMyOrders()
@@ -24,6 +25,10 @@ function Profile() {
         setOrders(res.orders);
       })
       .finally(() => setLoading(false));
+
+    getMyTradeIns().then((res) => {
+      if (res.ok) setTradeIns(res.requests);
+    });
   }, []);
 
   const totalSpent = orders
@@ -36,8 +41,8 @@ function Profile() {
   const quickLinks = [
     { to: "/orders", icon: Package, label: "Buyurtmalarim" },
     { to: "/xizmatlar", icon: Wrench, label: "Xizmatlar" },
-    { to: "/installment", icon: CreditCard, label: "Bo‘lib to‘lash" },
-    { to: "/cart", icon: Smartphone, label: "Savat" },
+    { to: "/my-phone", icon: Smartphone, label: "Mening telefonim" },
+    { to: "/cart", icon: ShoppingBag, label: "Savat" },
   ];
 
   if (loading) {
@@ -131,6 +136,33 @@ function Profile() {
             </div>
           )}
         </div>
+
+        {tradeIns.length > 0 && (
+          <div className="profile-card">
+            <div className="profile-card-header">
+              <h2>Telefon almashish so‘rovlari</h2>
+            </div>
+
+            <div className="profile-orders">
+              {tradeIns.map((req) => (
+                <div className="profile-order-row" key={req.id}>
+                  <div>
+                    <strong>{req.brand} {req.model}</strong>
+                    <span>{new Date(req.createdAt).toLocaleDateString("uz-UZ")}</span>
+                  </div>
+
+                  {req.status === "priced" && req.offeredPrice ? (
+                    <strong>{req.offeredPrice.toLocaleString("uz-UZ")} so‘m taklif qilindi</strong>
+                  ) : req.status === "rejected" ? (
+                    <span className="profile-tradein-rejected">Rad etildi</span>
+                  ) : (
+                    <span>Ko‘rib chiqilmoqda</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </main>
   );

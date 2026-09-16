@@ -6,7 +6,6 @@ import {
   Filter,
   Search,
   ShoppingCartPlus,
-  Star,
   X,
 } from "lucide-react";
 
@@ -42,8 +41,6 @@ function Catalog() {
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
 
-  const [minRating, setMinRating] = useState(0);
-
   const [sortBy, setSortBy] = useState("popular");
 
   const [search, setSearch] = useState(
@@ -72,7 +69,6 @@ function Catalog() {
     category: true,
     brand: true,
     price: true,
-    rating: true,
   });
 
   // ==============================
@@ -130,7 +126,6 @@ function Catalog() {
     setSelectedBrands([]);
     setMinPrice("");
     setMaxPrice("");
-    setMinRating(0);
     setSearch("");
     setSortBy("popular");
   };
@@ -173,14 +168,6 @@ function Catalog() {
       );
     }
 
-    // RATING
-    if (minRating > 0) {
-      result = result.filter(
-        (product) =>
-          product.rating >= minRating
-      );
-    }
-
     // SEARCH
     if (search.trim()) {
       const query = search
@@ -203,12 +190,6 @@ function Catalog() {
     }
 
     // SORT
-    if (sortBy === "popular") {
-      result.sort(
-        (a, b) => b.reviews - a.reviews
-      );
-    }
-
     if (sortBy === "cheap") {
       result.sort(
         (a, b) => a.price - b.price
@@ -221,12 +202,6 @@ function Catalog() {
       );
     }
 
-    if (sortBy === "rating") {
-      result.sort(
-        (a, b) => b.rating - a.rating
-      );
-    }
-
     return result;
   }, [
     products,
@@ -234,7 +209,6 @@ function Catalog() {
     selectedBrands,
     minPrice,
     maxPrice,
-    minRating,
     sortBy,
     search,
   ]);
@@ -562,65 +536,6 @@ function Catalog() {
               )}
             </div>
 
-            {/* =================================
-                RATING
-            ================================= */}
-
-            <div className="filter-section">
-
-              <button
-                type="button"
-                className="filter-section-title"
-                onClick={() =>
-                  toggleSection("rating")
-                }
-              >
-                <span>Reyting</span>
-
-                {openSections.rating ? (
-                  <ChevronUp size={18} />
-                ) : (
-                  <ChevronDown size={18} />
-                )}
-              </button>
-
-              {openSections.rating && (
-                <div className="rating-options">
-
-                  {[4.5, 4, 3, 2].map(
-                    (rating) => (
-                      <button
-                        type="button"
-                        key={rating}
-                        className={
-                          minRating === rating
-                            ? "active"
-                            : ""
-                        }
-                        onClick={() =>
-                          setMinRating(
-                            minRating === rating
-                              ? 0
-                              : rating
-                          )
-                        }
-                      >
-                        <Star
-                          size={15}
-                          fill="currentColor"
-                        />
-
-                        <span>
-                          {rating} va undan yuqori
-                        </span>
-                      </button>
-                    )
-                  )}
-
-                </div>
-              )}
-            </div>
-
             {/* MOBILE APPLY */}
 
             <button
@@ -649,7 +564,7 @@ function Catalog() {
                 <strong>
                   {filteredProducts.length}
                 </strong>{" "}
-                ta mahsulot
+                mahsulot
               </div>
 
               <div className="sort-wrapper">
@@ -671,10 +586,6 @@ function Catalog() {
 
                   <option value="expensive">
                     Qimmat → Arzon
-                  </option>
-
-                  <option value="rating">
-                    Reyting
                   </option>
                 </select>
               </div>

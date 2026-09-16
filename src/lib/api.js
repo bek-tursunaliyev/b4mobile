@@ -38,6 +38,9 @@ function mapProduct(row) {
     refreshRateHz: row.refresh_rate_hz ?? "",
     batteryCapacityMah: row.battery_capacity_mah ?? "",
     chipset: row.chipset || "",
+    deliveryAvailable: row.delivery_available ?? true,
+    deliveryPrice: row.delivery_price != null ? Number(row.delivery_price) : null,
+    warranty: row.warranty || "",
   };
 }
 
@@ -76,6 +79,15 @@ function mapOrder(row) {
       ? Number(row.installment_monthly_amount)
       : null,
     pickedUpAt: row.picked_up_at || null,
+  };
+}
+
+function mapExpense(row) {
+  return {
+    id: row.id,
+    description: row.description,
+    amount: Number(row.amount),
+    createdAt: row.created_at,
   };
 }
 
@@ -417,4 +429,21 @@ export async function adminUpdateTradeIn(id, updates) {
     body: updates,
   });
   return mapTradeIn(updated);
+}
+
+export async function adminGetExpenses() {
+  const { expenses } = await adminRequest("admin-expenses");
+  return expenses.map(mapExpense);
+}
+
+export async function adminCreateExpense(expense) {
+  const { expense: created } = await adminRequest("admin-expenses", {
+    method: "POST",
+    body: expense,
+  });
+  return mapExpense(created);
+}
+
+export async function adminDeleteExpense(id) {
+  return adminRequest("admin-expenses", { method: "DELETE", id });
 }

@@ -4,7 +4,6 @@ import {
   ArrowLeft,
   ChevronRight,
   ShoppingCart,
-  Star,
   Truck,
   ShieldCheck,
   Minus,
@@ -105,19 +104,15 @@ function Products() {
     navigate("/checkout");
   };
 
-  const delivery =
-    product.delivery ||
-    product.specs?.find(
-      (item) => item.label === "Yetkazib berish"
-    )?.value ||
-    "1–2 kun ichida";
+  const deliveryAvailable = product.deliveryAvailable !== false;
 
-  const warranty =
-    product.warranty ||
-    product.specs?.find(
-      (item) => item.label === "Kafolat"
-    )?.value ||
-    "1 yil";
+  const deliveryText = deliveryAvailable
+    ? product.deliveryPrice
+      ? `${Number(product.deliveryPrice).toLocaleString("uz-UZ")} so‘m`
+      : "Bepul"
+    : "Mavjud emas";
+
+  const warranty = product.warranty || "Kafolat yo‘q";
 
   return (
     <main className="product-page">
@@ -338,11 +333,11 @@ function Products() {
 
               <div>
                 <strong>
-                  Tez yetkazib berish
+                  Yetkazib berish
                 </strong>
 
-                <span>
-                  {delivery}
+                <span className={deliveryAvailable ? "" : "feature-strike"}>
+                  {deliveryText}
                 </span>
               </div>
 

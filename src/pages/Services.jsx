@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, CreditCard, Scale, Search, Smartphone } from "lucide-react";
+import { ArrowRight, Scale, Search, Smartphone } from "lucide-react";
 
 import "./services.css";
 
@@ -22,12 +22,6 @@ const SERVICES = [
     icon: Smartphone,
     title: "Mening telefonim",
     description: "Eski telefoningizni topshiring — ma’lumotlarini kiriting, narx taklifini oling.",
-  },
-  {
-    to: "/installment",
-    icon: CreditCard,
-    title: "Bo‘lib to‘lash",
-    description: "Mahsulotni tanlang, necha oyga bo‘lib to‘lashni hisoblang.",
   },
 ];
 

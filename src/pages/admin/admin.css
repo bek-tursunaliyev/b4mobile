@@ -115,10 +115,10 @@
 .admin-nav {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 6px;
 
   flex: 1;
-  overflow-x: auto;
 }
 
 .admin-nav a {
@@ -199,7 +199,7 @@
 
 .admin-stats-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 14px;
 
   margin-bottom: 24px;
@@ -889,6 +889,19 @@
   background: #DAA520;
 }
 
+.admin-orders-toolbar {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+
+  margin-bottom: 16px;
+}
+
+.admin-orders-toolbar .admin-submit {
+  align-self: flex-start;
+}
+
 .admin-scan-result p {
   margin-bottom: 8px;
   font-size: 12.5px;
@@ -1005,6 +1018,233 @@
   background: #DAA520;
 }
 
+.admin-tradein-priced {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-tradein-priced-tick {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 6px 10px;
+
+  border-radius: 8px;
+  background: #eaf7ee;
+  color: #1a9a4a;
+
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.admin-tradein-priced button {
+  padding: 8px 12px;
+
+  border: 1px solid #e3e3e3;
+  border-radius: 8px;
+  background: #fafafa;
+  color: #444;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.admin-tradein-priced button:hover {
+  background: #eee;
+}
+
+/* ==================================================
+   PRODUCT DELIVERY & WARRANTY
+================================================== */
+
+.admin-delivery-editor {
+  padding-top: 6px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.admin-delivery-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  margin-top: 12px;
+}
+
+.admin-delivery-row input[type="number"] {
+  max-width: 160px;
+}
+
+.admin-delivery-free {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center;
+  gap: 6px;
+
+  font-size: 11px;
+  font-weight: 600;
+  color: #444;
+  white-space: nowrap;
+}
+
+.admin-delivery-free input {
+  width: auto;
+  accent-color: #111;
+}
+
+/* ==================================================
+   ID SEARCH
+================================================== */
+
+.admin-search-row {
+  margin-bottom: 16px;
+}
+
+.admin-search-row input {
+  max-width: 280px;
+  width: 100%;
+  padding: 11px 13px;
+
+  border: 1px solid #e3e3e3;
+  border-radius: 10px;
+
+  background: #fafafa;
+  color: #111;
+
+  font-family: "Unbounded", sans-serif;
+  font-size: 12px;
+
+  outline: none;
+
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.admin-search-row input:focus {
+  border-color: #111;
+  background: #fff;
+}
+
+/* ==================================================
+   REPORTS
+================================================== */
+
+.admin-report-stats {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.admin-report-positive {
+  color: #1a9a4a;
+}
+
+.admin-report-negative {
+  color: #d33a3a;
+}
+
+.admin-expense-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.admin-expense-form input {
+  flex: 1;
+  min-width: 160px;
+
+  padding: 11px 13px;
+
+  border: 1px solid #e3e3e3;
+  border-radius: 10px;
+  background: #fafafa;
+
+  font-family: "Unbounded", sans-serif;
+  font-size: 12px;
+}
+
+.admin-report-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-report-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  padding: 12px 14px;
+
+  background: #fafafa;
+  border-radius: 10px;
+}
+
+.admin-report-row > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.admin-report-tag {
+  display: inline-flex;
+  padding: 3px 9px;
+
+  border-radius: 20px;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.admin-report-tag-kirim {
+  background: #eaf7ee;
+  color: #1a9a4a;
+}
+
+.admin-report-tag-chiqim {
+  background: #fdeaea;
+  color: #d33a3a;
+}
+
+.admin-report-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #333;
+}
+
+.admin-report-date {
+  color: #999;
+  font-size: 10.5px;
+}
+
+.admin-report-row-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-report-row-right button {
+  border: 1px solid #e3e3e3;
+  border-radius: 8px;
+  background: #fafafa;
+
+  padding: 6px 10px;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: background 0.2s ease;
+}
+
+.admin-report-row-right button:hover {
+  background: #eee;
+}
+
 /* ==================================================
    RESPONSIVE
 ================================================== */
@@ -1046,5 +1286,16 @@
 
   .admin-score-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .admin-orders-toolbar .admin-submit {
+    width: 100%;
+    align-self: stretch;
+  }
+}
+
+@media (max-width: 900px) {
+  .admin-report-stats {
+    grid-template-columns: 1fr;
   }
 }

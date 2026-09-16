@@ -7,6 +7,7 @@ import {
   ShoppingBag,
   Smartphone,
   ArrowLeft,
+  FileBarChart,
 } from "lucide-react";
 
 import { useAdmin } from "../../hooks/useAdmin";
@@ -75,6 +76,11 @@ function AdminLayout() {
           <NavLink to="/admin/trade-ins">
             <Smartphone size={17} />
             Telefon almashish
+          </NavLink>
+
+          <NavLink to="/admin/reports">
+            <FileBarChart size={17} />
+            Hisobot
           </NavLink>
         </nav>
 
