@@ -620,6 +620,7 @@ function Catalog() {
                         <img
                           src={product.image}
                           alt={product.name}
+                          loading="lazy"
                         />
                       </div>
 

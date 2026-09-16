@@ -66,7 +66,7 @@ function AdminTradeIns() {
             {requests.map((req) => (
               <div className="admin-tradein-item" key={req.id}>
                 {req.image ? (
-                  <img src={req.image} alt={req.model} />
+                  <img src={req.image} alt={req.model} loading="lazy" />
                 ) : (
                   <div className="admin-tradein-noimage">Rasm yo‘q</div>
                 )}

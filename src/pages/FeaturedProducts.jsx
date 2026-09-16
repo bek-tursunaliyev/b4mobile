@@ -12,7 +12,7 @@ function FeaturedProducts() {
   const [featured, setFeatured] = useState([]);
 
   useEffect(() => {
-    getProducts().then((all) => setFeatured(all.slice(0, 4)));
+    getProducts({ limit: 4 }).then(setFeatured);
   }, []);
 
   const handleAddToCart = (e, product) => {
@@ -46,7 +46,7 @@ function FeaturedProducts() {
               onClick={() => navigate(`/product/${product.id}`)}
             >
               <div className="product-image">
-                <img src={product.image} alt={product.name} />
+                <img src={product.image} alt={product.name} loading="lazy" />
               </div>
 
               <div className="product-info">

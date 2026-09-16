@@ -298,7 +298,7 @@ function MyPhone() {
 
             {requests.map((req) => (
               <div className="myphone-history-item" key={req.id}>
-                {req.image && <img src={req.image} alt={req.model} />}
+                {req.image && <img src={req.image} alt={req.model} loading="lazy" />}
 
                 <div className="myphone-history-info">
                   <strong>{req.brand} {req.model}</strong>

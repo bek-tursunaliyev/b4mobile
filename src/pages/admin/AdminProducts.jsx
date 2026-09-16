@@ -645,7 +645,7 @@ function AdminProducts() {
                     <td>{product.id}</td>
                     <td>
                       {product.image && (
-                        <img src={product.image} alt="" className="admin-row-thumb" />
+                        <img src={product.image} alt="" className="admin-row-thumb" loading="lazy" />
                       )}
                     </td>
                     <td>{product.name}</td>

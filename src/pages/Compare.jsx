@@ -145,7 +145,7 @@ function Compare() {
                       className="compare-search-option"
                       onClick={() => addProduct(p.id)}
                     >
-                      <img src={p.image} alt={p.name} />
+                      <img src={p.image} alt={p.name} loading="lazy" />
                       <span>{p.name}</span>
                       <strong>{p.price.toLocaleString("uz-UZ")} so‘m</strong>
                     </button>

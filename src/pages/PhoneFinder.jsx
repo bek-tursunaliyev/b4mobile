@@ -202,7 +202,7 @@ function PhoneFinder() {
                 {results.map((product) => (
                   <article className="finder-result-card" key={product.id}>
                     <div className="finder-result-top">
-                      <img src={product.image} alt={product.name} />
+                      <img src={product.image} alt={product.name} loading="lazy" />
 
                       <div className="finder-result-info">
                         <span className="finder-result-brand">{product.brand}</span>

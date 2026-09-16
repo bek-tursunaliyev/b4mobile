@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import { AdminContext } from "./admin-context";
 import { verifyAdmin } from "../lib/api";
@@ -30,8 +30,13 @@ export function AdminProvider({ children }) {
     };
   }, []);
 
+  const value = useMemo(
+    () => ({ isAdmin, telegramUser, loading }),
+    [isAdmin, telegramUser, loading]
+  );
+
   return (
-    <AdminContext.Provider value={{ isAdmin, telegramUser, loading }}>
+    <AdminContext.Provider value={value}>
       {children}
     </AdminContext.Provider>
   );

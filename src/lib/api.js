@@ -118,12 +118,16 @@ function mapTradeIn(row) {
 // PUBLIC STOREFRONT
 // ==================================================
 
-export async function getProducts() {
-  const { data, error } = await supabase
+export async function getProducts({ limit } = {}) {
+  let query = supabase
     .from("products")
     .select(PUBLIC_PRODUCT_COLUMNS)
     .eq("is_active", true)
     .order("created_at", { ascending: false });
+
+  if (limit) query = query.limit(limit);
+
+  const { data, error } = await query;
 
   if (error) throw error;
   return (data || []).map(mapProduct);

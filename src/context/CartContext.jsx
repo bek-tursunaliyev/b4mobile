@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import { CartContext } from "./cart-context";
 
@@ -16,7 +16,7 @@ export function CartProvider({ children }) {
     localStorage.setItem("vibe-cart", JSON.stringify(cart));
   }, [cart]);
 
-  const addToCart = (product, quantity = 1) => {
+  const addToCart = useCallback((product, quantity = 1) => {
     setCart((prev) => {
       const existingProduct = prev.find(
         (item) => item.id === product.id
@@ -41,15 +41,15 @@ export function CartProvider({ children }) {
         },
       ];
     });
-  };
+  }, []);
 
-  const removeFromCart = (productId) => {
+  const removeFromCart = useCallback((productId) => {
     setCart((prev) =>
       prev.filter((item) => item.id !== productId)
     );
-  };
+  }, []);
 
-  const increaseQuantity = (productId) => {
+  const increaseQuantity = useCallback((productId) => {
     setCart((prev) =>
       prev.map((item) =>
         item.id === productId
@@ -63,9 +63,9 @@ export function CartProvider({ children }) {
           : item
       )
     );
-  };
+  }, []);
 
-  const decreaseQuantity = (productId) => {
+  const decreaseQuantity = useCallback((productId) => {
     setCart((prev) =>
       prev
         .map((item) =>
@@ -78,35 +78,38 @@ export function CartProvider({ children }) {
         )
         .filter((item) => item.quantity > 0)
     );
-  };
+  }, []);
 
-  const clearCart = () => {
+  const clearCart = useCallback(() => {
     setCart([]);
-  };
+  }, []);
 
-  const cartCount = cart.reduce(
-    (total, item) => total + item.quantity,
-    0
+  const cartCount = useMemo(
+    () => cart.reduce((total, item) => total + item.quantity, 0),
+    [cart]
   );
 
-  const cartTotal = cart.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0
+  const cartTotal = useMemo(
+    () => cart.reduce((total, item) => total + item.price * item.quantity, 0),
+    [cart]
+  );
+
+  const value = useMemo(
+    () => ({
+      cart,
+      cartCount,
+      cartTotal,
+      addToCart,
+      removeFromCart,
+      increaseQuantity,
+      decreaseQuantity,
+      clearCart,
+    }),
+    [cart, cartCount, cartTotal, addToCart, removeFromCart, increaseQuantity, decreaseQuantity, clearCart]
   );
 
   return (
-    <CartContext.Provider
-      value={{
-        cart,
-        cartCount,
-        cartTotal,
-        addToCart,
-        removeFromCart,
-        increaseQuantity,
-        decreaseQuantity,
-        clearCart,
-      }}
-    >
+    <CartContext.Provider value={value}>
       {children}
     </CartContext.Provider>
   );

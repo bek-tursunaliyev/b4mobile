@@ -1,30 +1,56 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import MainLayout from "./layouts/MainLayouts";
 
+// Home loads eagerly (it's the first screen). Everything else is
+// code-split so a customer's first load doesn't pull in the whole
+// catalog/checkout/admin bundle, and the admin panel never ships to
+// customers who never open it.
 import Home from "./pages/Home";
-import Catalog from "./pages/Catalog";
-import Compare from "./pages/Compare";
-import MyPhone from "./pages/MyPhone";
-import PhoneFinder from "./pages/PhoneFinder";
-import Cart from "./pages/Cart";
-import Checkout from "./pages/Checkout";
-import Orders from "./pages/Orders";
-import Products from "./pages/Products";
-import Profile from "./pages/Profile";
-import Services from "./pages/Services";
 import NotFound from "./pages/NotFound";
 import { CartProvider } from "./context/CartContext";
 import { AdminProvider } from "./context/AdminContext";
 
-import AdminLayout from "./pages/admin/AdminLayout";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminProducts from "./pages/admin/AdminProducts";
-import AdminBanners from "./pages/admin/AdminBanners";
-import AdminOrders from "./pages/admin/AdminOrders";
-import AdminTradeIns from "./pages/admin/AdminTradeIns";
-import AdminReports from "./pages/admin/AdminReports";
+const Catalog = lazy(() => import("./pages/Catalog"));
+const Compare = lazy(() => import("./pages/Compare"));
+const MyPhone = lazy(() => import("./pages/MyPhone"));
+const PhoneFinder = lazy(() => import("./pages/PhoneFinder"));
+const Cart = lazy(() => import("./pages/Cart"));
+const Checkout = lazy(() => import("./pages/Checkout"));
+const Orders = lazy(() => import("./pages/Orders"));
+const Products = lazy(() => import("./pages/Products"));
+const Profile = lazy(() => import("./pages/Profile"));
+const Services = lazy(() => import("./pages/Services"));
+
+const AdminLayout = lazy(() => import("./pages/admin/AdminLayout"));
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const AdminProducts = lazy(() => import("./pages/admin/AdminProducts"));
+const AdminBanners = lazy(() => import("./pages/admin/AdminBanners"));
+const AdminOrders = lazy(() => import("./pages/admin/AdminOrders"));
+const AdminTradeIns = lazy(() => import("./pages/admin/AdminTradeIns"));
+const AdminReports = lazy(() => import("./pages/admin/AdminReports"));
+
+function PageFallback() {
+  return (
+    <div
+      style={{
+        minHeight: "60vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        color: "#888",
+        fontSize: 13,
+      }}
+    >
+      Yuklanmoqda...
+    </div>
+  );
+}
+
+function withSuspense(element) {
+  return <Suspense fallback={<PageFallback />}>{element}</Suspense>;
+}
 
 const router = createBrowserRouter([
   {
@@ -40,59 +66,59 @@ const router = createBrowserRouter([
 
       {
         path: "catalog",
-        element: <Catalog />,
+        element: withSuspense(<Catalog />),
       },
 
       {
         path: "phone-finder",
-        element: <PhoneFinder />,
+        element: withSuspense(<PhoneFinder />),
       },
 
       {
         path: "compare",
-        element: <Compare />,
+        element: withSuspense(<Compare />),
       },
 
       {
         path: "my-phone",
-        element: <MyPhone />,
+        element: withSuspense(<MyPhone />),
       },
 
       {
         path: "cart",
-        element: <Cart />,
+        element: withSuspense(<Cart />),
       },
 
       {
         path: "checkout",
-        element: <Checkout />,
+        element: withSuspense(<Checkout />),
       },
 
       {
         path: "orders",
-        element: <Orders />,
+        element: withSuspense(<Orders />),
       },
 
       {
         path: "profile",
-        element: <Profile />,
+        element: withSuspense(<Profile />),
       },
 
       {
         path: "xizmatlar",
-        element: <Services />,
+        element: withSuspense(<Services />),
       },
 
       // PRODUCT DETAIL
       {
         path: "product/:id",
-        element: <Products />,
+        element: withSuspense(<Products />),
       },
 
       // Agar /products/1 yozilsa ham ishlaydi
       {
         path: "products/:id",
-        element: <Products />,
+        element: withSuspense(<Products />),
       },
     ],
   },
@@ -100,33 +126,33 @@ const router = createBrowserRouter([
   // ADMIN PANEL
   {
     path: "/admin",
-    element: <AdminLayout />,
+    element: withSuspense(<AdminLayout />),
     errorElement: <NotFound />,
 
     children: [
       {
         index: true,
-        element: <AdminDashboard />,
+        element: withSuspense(<AdminDashboard />),
       },
       {
         path: "products",
-        element: <AdminProducts />,
+        element: withSuspense(<AdminProducts />),
       },
       {
         path: "banners",
-        element: <AdminBanners />,
+        element: withSuspense(<AdminBanners />),
       },
       {
         path: "orders",
-        element: <AdminOrders />,
+        element: withSuspense(<AdminOrders />),
       },
       {
         path: "trade-ins",
-        element: <AdminTradeIns />,
+        element: withSuspense(<AdminTradeIns />),
       },
       {
         path: "reports",
-        element: <AdminReports />,
+        element: withSuspense(<AdminReports />),
       },
     ],
   },
