@@ -115,6 +115,22 @@ function Products() {
 
   const warranty = product.warranty || "Kafolat yo‘q";
 
+  const mainSpecs = [
+    { label: "RAM", value: product.ramGb ? `${product.ramGb} GB` : "" },
+    {
+      label: "Doimiy xotira",
+      value: product.storageGb
+        ? product.storageGb >= 1024
+          ? "1 TB"
+          : `${product.storageGb} GB`
+        : "",
+    },
+    { label: "Ekran", value: product.screen },
+    { label: "Kamera", value: product.camera },
+    { label: "Batareya", value: product.battery },
+    { label: "Himoya darajasi", value: product.ipRating },
+  ];
+
   return (
     <main className="product-page">
 
@@ -499,39 +515,40 @@ function Products() {
 
         </div>
 
-        {product.specs?.length > 0 ? (
-          <div className="specifications-list">
+        <div className="specifications-list">
 
-            {product.specs.map(
-              (spec, index) => (
-                <div
-                  className="spec-row"
-                  key={`${spec.label}-${index}`}
-                >
+          {mainSpecs.map((spec) => (
+            <div className="spec-row" key={spec.label}>
+              <span>
+                {spec.label}
+              </span>
 
-                  <span>
-                    {spec.label}
-                  </span>
+              <strong>
+                {spec.value || "-"}
+              </strong>
+            </div>
+          ))}
 
-                  <strong>
-                    {spec.value}
-                  </strong>
+          {product.specs?.map(
+            (spec, index) => (
+              <div
+                className="spec-row"
+                key={`${spec.label}-${index}`}
+              >
 
-                </div>
-              )
-            )}
+                <span>
+                  {spec.label}
+                </span>
 
-          </div>
-        ) : (
-          <div className="no-specifications">
-            <Package size={22} />
+                <strong>
+                  {spec.value}
+                </strong>
 
-            <span>
-              Ushbu mahsulot uchun
-              xususiyatlar kiritilmagan.
-            </span>
-          </div>
-        )}
+              </div>
+            )
+          )}
+
+        </div>
 
       </section>
 
